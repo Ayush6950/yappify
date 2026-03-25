@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import user from '../models/User.js';
+import User from '../models/user.js';
 import { generateToken } from '../lib/utils.js';
 
 export const signup = async (req, res) => {
@@ -26,31 +26,30 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Email is already registered" });
     }
 
-    // 3. Hash password
+    
     const salt = await bcrypt.genSalt(10);
     const hashpassword = await bcrypt.hash(password, salt);
 
-    // 4. Create user
-    const newuser = new User({
-      fullname: username,
+     const newuser = new User({
+      fullName: username,
       email,
-      password: hashpassword
+      password: hashpassword,
     });
 
-    // 5. Save user
+  if (newuser) {
+
     await newuser.save();
-
-    // 6. Generate token
     generateToken(newuser._id, res);
-
-    // 7. Response
     res.status(201).json({
       _id: newuser._id,
-      fullname: newuser.fullname,
+      fullName: newuser.fullName,
       email: newuser.email,
       profilePic: newuser.profilePic,
     });
 
+  } else {
+    res.status(400).json({ message: "Invalid user data" });
+  }
   } catch (error) {
     console.log("Error in signup:", error);
     res.status(500).json({ message: "Internal server error" });
