@@ -16,8 +16,8 @@ export const sendWelcomeEmail = async (email, name, clientURL) => {
     }
 
     console.log("Email sent successfully:", data);
-
-  } catch (err) {
-    console.error("Email failed:", err.message);
+ 
+  } catch (error) {
+    console.error("Email failed:", error.message);
   }
 };
