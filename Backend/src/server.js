@@ -5,17 +5,21 @@ import { connectDB } from './lib/db.js';
 import messageroutes from './routes/message.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import "dotenv/config";
+import cookieParser from 'cookie-parser';
+
+
 
 const app = express();
 app.use(express.json());
 
-const __dirname = path.resolve(); // ✅ fix name
+app.use(cookieParser()); //  add cookie-parser middleware
+
+const __dirname = path.resolve(); 
 
 const PORT = ENV.PORT || 3000;
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageroutes);
-
 
 // make ready for deployment
 if (ENV.NODE_ENV === "production") {

@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/Ayush6950/yappify/issues"
   },
-  "homepage": "https://github.com/Ayush6950/yappify#readme"
+  "homepage": "https://github.com/Ayush6950/yappify#readme",
+  "dependencies": {
+    "cloudinary": "^2.9.0"
+  }
 }
