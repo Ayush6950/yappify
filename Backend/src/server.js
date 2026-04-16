@@ -6,12 +6,12 @@ import messageroutes from './routes/message.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import "dotenv/config";
 import cookieParser from 'cookie-parser';
-
+import cors from 'cors';
 
 
 const app = express();
 app.use(express.json());
-
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true })); 
 app.use(cookieParser()); //  add cookie-parser middleware
 
 const __dirname = path.resolve(); 
