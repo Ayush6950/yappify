@@ -1,41 +1,38 @@
-import express from 'express';
-import path from 'path';
-import { ENV } from './lib/env.js'; 
-import { connectDB } from './lib/db.js';
-import messageroutes from './routes/message.routes.js';
-import authRoutes from './routes/auth.routes.js';
 import "dotenv/config";
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
+import express from "express";
+import path from "path";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
+import { ENV } from "./lib/env.js";
+import { connectDB } from "./lib/db.js";
+import { app, server } from "./lib/socket.js";
+import authRoutes from "./routes/auth.routes.js";
+import messageroutes from "./routes/message.routes.js";
 
-const app = express();
-app.use(express.json());
-app.use(cors({ origin: ENV.CLIENT_URL, credentials: true })); 
-app.use(cookieParser()); //  add cookie-parser middleware
-
-const __dirname = path.resolve(); 
-
+const __dirname = path.resolve();
 const PORT = ENV.PORT || 3000;
+
+app.use(express.json());
+app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageroutes);
 
-// make ready for deployment
-if (ENV.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../frontend/dist"))); // ✅ Vite uses dist
-
-    // ✅ FIX: remove app.get("/*") and use this
-    app.use((req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-    });
+// Serve frontend in production
+if (ENV.NODE_ENV === "development") {
+  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+  app.use((req, res) => {
+    res.sendFile(path.join(__dirname, "../Frontend/dist/index.html"));
+  });
 }
 
 const startServer = async () => {
-    await connectDB();
-       app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
+  await connectDB();
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 };
 
-startServer();
+startServer(); 
