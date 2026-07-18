@@ -42,4 +42,61 @@ io.on("connection", (socket) => {
   });
 });
 
+{/* call request */}
+socket.on("call-user", ({ to, offer, callType }) => {
+  const receiverSocketId = getReceiverSocketId(to);
+
+  if (!receiverSocketId) return;
+
+  io.to(receiverSocketId).emit("incoming-call", {
+    from: socket.user,
+    offer,
+    callType,
+  });
+});
+
+{/* call accept answer */}
+socket.on("accept-call", ({ to, answer }) => {
+  const receiverSocketId = getReceiverSocketId(to);
+
+  if (!receiverSocketId) return;
+
+  io.to(receiverSocketId).emit("call-accepted", {
+    answer,
+  });
+});
+
+{/* call reject */}
+socket.on("reject-call", ({ to }) => {
+  const receiverSocketId = getReceiverSocketId(to);
+
+  if (!receiverSocketId) return;
+
+  io.to(receiverSocketId).emit("call-rejected");
+});
+
+
+{/* ICE candidate exchange */}
+socket.on("ice-candidate", ({ to, candidate }) => {
+  const receiverSocketId = getReceiverSocketId(to);
+
+  if (!receiverSocketId) return;
+
+  io.to(receiverSocketId).emit("ice-candidate", {
+    candidate,
+  });
+});
+
+{/* call end */}
+socket.on("end-call", ({ to }) => {
+  const receiverSocketId = getReceiverSocketId(to);
+
+  if (!receiverSocketId) return;
+
+  io.to(receiverSocketId).emit("call-ended");
+});
+
+
+
+
 export { io, app, server };  

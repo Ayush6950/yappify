@@ -12,6 +12,7 @@ function ChatPage() {
 
   return (
     <div className="w-full max-w-6xl h-[800px]">
+     
       <BorderAnimatedContainer>
         {/* LEFT SIDEBAR */}
         <div className="
@@ -25,6 +26,8 @@ function ChatPage() {
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
             {activeTab === "chats" ? <ChatsList /> : <ContactList />}
           </div>
+
+        
         </div>
 
         {/* RIGHT CHAT AREA */}
@@ -34,6 +37,7 @@ function ChatPage() {
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
       </BorderAnimatedContainer>
+      
 
       <style>{`
         @media (prefers-reduced-motion: reduce) {
