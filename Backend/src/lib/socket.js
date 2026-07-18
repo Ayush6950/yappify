@@ -4,6 +4,8 @@ import http from "http";
 import express from "express";
 import { ENV } from "./env.js";
 import { socketAuthMiddleware } from "../middleware/socket.auth.middleware.js";
+import User from "../models/user.js";
+import Message from "../models/message.js";
  
 const app = express();
 const server = http.createServer(app);
@@ -46,6 +48,7 @@ io.on("connection", (socket) => {
  
     // Broadcast online users
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    io.emit("user_online", userId);
  
     // ==========================================
     // Start Call
@@ -182,15 +185,117 @@ io.on("connection", (socket) => {
     });
  
     // ==========================================
+    // Typing Indicators
+    // ==========================================
+
+    socket.on("typing_start", ({ to }) => {
+      if (!to) return;
+      const receiverSocketId = getReceiverSocketId(to);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("typing_start", { from: userId });
+      }
+    });
+
+    socket.on("typing_end", ({ to }) => {
+      if (!to) return;
+      const receiverSocketId = getReceiverSocketId(to);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("typing_end", { from: userId });
+      }
+    });
+
+    // ==========================================
+    // Read Receipts
+    // ==========================================
+
+    socket.on("message_delivered", async ({ messageId, senderId }) => {
+      try {
+        await Message.findByIdAndUpdate(messageId, { status: "delivered" });
+        const senderSocketId = getReceiverSocketId(senderId);
+        if (senderSocketId) {
+          io.to(senderSocketId).emit("message_status_update", {
+            messageId,
+            status: "delivered",
+          });
+        }
+      } catch (err) {
+        console.error("Error in message_delivered socket handler:", err);
+      }
+    });
+
+    socket.on("message_read", async ({ messageId, senderId }) => {
+      try {
+        const recipient = await User.findById(userId);
+        const sender = await User.findById(senderId);
+
+        if (recipient && !recipient.disableReadReceipts && sender && !sender.disableReadReceipts) {
+          const readAt = new Date();
+          await Message.findByIdAndUpdate(messageId, { status: "read", readAt });
+
+          const senderSocketId = getReceiverSocketId(senderId);
+          if (senderSocketId) {
+            io.to(senderSocketId).emit("message_status_update", {
+              messageId,
+              status: "read",
+              readAt,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error in message_read socket handler:", err);
+      }
+    });
+
+    // ==========================================
+    // Message Management
+    // ==========================================
+
+    socket.on("message_edited", ({ to, messageId, text, isEdited, editHistory }) => {
+      if (!to) return;
+      const receiverSocketId = getReceiverSocketId(to);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("message_edited", { messageId, text, isEdited, editHistory });
+      }
+    });
+
+    socket.on("message_deleted", ({ to, messageId }) => {
+      if (!to) return;
+      const receiverSocketId = getReceiverSocketId(to);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("message_deleted", { messageId });
+      }
+    });
+
+    // ==========================================
+    // Reactions
+    // ==========================================
+
+    socket.on("message_reacted", ({ to, messageId, reactions }) => {
+      if (!to) return;
+      const receiverSocketId = getReceiverSocketId(to);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("message_reacted", { messageId, reactions });
+      }
+    });
+
+    // ==========================================
     // Disconnect
     // ==========================================
  
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log(`❌ ${socket.user.fullName} Disconnected`);
  
       delete userSocketMap[userId];
  
+      // Update lastSeen in database
+      try {
+        await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
+      } catch (err) {
+        console.error("Failed to update lastSeen on disconnect:", err);
+      }
+
       io.emit("getOnlineUsers", Object.keys(userSocketMap));
+      io.emit("user_offline", userId);
     });
   } catch (err) {
     console.error("Socket Error:", err);

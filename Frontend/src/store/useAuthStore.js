@@ -208,6 +208,18 @@ export const useAuthStore = create((set, get) => ({
       });
     });
 
+    newSocket.on("user_online", (userId) => {
+      set((state) => ({
+        onlineUsers: state.onlineUsers.includes(userId) ? state.onlineUsers : [...state.onlineUsers, userId],
+      }));
+    });
+
+    newSocket.on("user_offline", (userId) => {
+      set((state) => ({
+        onlineUsers: state.onlineUsers.filter((id) => id !== userId),
+      }));
+    });
+
     // =========================
     // Incoming Call
     // =========================

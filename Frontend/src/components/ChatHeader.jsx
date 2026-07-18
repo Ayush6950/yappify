@@ -123,7 +123,17 @@ function ChatHeader() {
                   Online
                 </span>
               ) : (
-                "Offline"
+                (() => {
+                  if (!selectedUser.lastSeen) return "Offline";
+                  const date = new Date(selectedUser.lastSeen);
+                  const diffMs = new Date() - date;
+                  const diffMins = Math.floor(diffMs / 60000);
+                  if (diffMins < 1) return "Offline (just now)";
+                  if (diffMins < 60) return `Last seen ${diffMins}m ago`;
+                  const diffHrs = Math.floor(diffMins / 60);
+                  if (diffHrs < 24) return `Last seen ${diffHrs}h ago`;
+                  return `Last seen ${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })} at ${date.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}`;
+                })()
               )}
             </p>
           </div>
