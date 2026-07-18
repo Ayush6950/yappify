@@ -1,10 +1,9 @@
 
-import {useState} from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { XIcon, PhoneIcon, VideoIcon } from "lucide-react";
-import VideoPreview from "./VideoPreview";
+import { useCallStore } from "../store/useCallStore";
  
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
@@ -14,13 +13,11 @@ function ChatHeader() {
   if (!selectedUser) return null;
   
   const isOnline = onlineUsers.includes(selectedUser._id);
-  const [showVideoPreview, setShowVideoPreview] = useState(false);
  
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === "Escape") {
         setSelectedUser(null);
-        setShowVideoPreview(false); // Also close video preview on Escape
       }
     };
  
@@ -31,22 +28,15 @@ function ChatHeader() {
  
   const handleClose = () => {
     setSelectedUser(null);
-    setShowVideoPreview(false);
   };
  
   // ✅ Add these missing handlers
   const handleVoiceCall = () => {
-    console.log("Voice call with:", selectedUser.fullName);
-    // TODO: Implement voice call logic
+    useCallStore.getState().startCall({ user: selectedUser, callType: "voice" });
   };
  
   const handleVideoCall = () => {
-    console.log("Video call with:", selectedUser.fullName);
-    setShowVideoPreview(true);
-  };
- 
-  const handleCloseVideoPreview = () => {
-    setShowVideoPreview(false);
+    useCallStore.getState().startCall({ user: selectedUser, callType: "video" });
   };
  
   return (
@@ -194,13 +184,7 @@ function ChatHeader() {
  
       </div>
  
-      {/* Video Preview Modal */}
-      {showVideoPreview && (
-        <VideoPreview 
-          selectedUser={selectedUser}
-          onClose={handleCloseVideoPreview}
-        />
-      )}
+
  
       {/* Add keyframe animations to your global CSS */}
       <style>{`
