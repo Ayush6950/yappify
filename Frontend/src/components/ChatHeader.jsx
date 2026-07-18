@@ -1,27 +1,54 @@
-import { XIcon } from "lucide-react";
+
+import {useState} from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-
+import { XIcon, PhoneIcon, VideoIcon } from "lucide-react";
+import VideoPreview from "./VideoPreview";
+ 
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  
+  // Add null check
+  if (!selectedUser) return null;
+  
   const isOnline = onlineUsers.includes(selectedUser._id);
-
+  const [showVideoPreview, setShowVideoPreview] = useState(false);
+ 
   useEffect(() => {
     const handleEscKey = (event) => {
-      if (event.key === "Escape") setSelectedUser(null);
+      if (event.key === "Escape") {
+        setSelectedUser(null);
+        setShowVideoPreview(false); // Also close video preview on Escape
+      }
     };
-
+ 
     window.addEventListener("keydown", handleEscKey);
-
+ 
     return () => window.removeEventListener("keydown", handleEscKey);
   }, [setSelectedUser]);
-
+ 
   const handleClose = () => {
     setSelectedUser(null);
+    setShowVideoPreview(false);
   };
-
+ 
+  // ✅ Add these missing handlers
+  const handleVoiceCall = () => {
+    console.log("Voice call with:", selectedUser.fullName);
+    // TODO: Implement voice call logic
+  };
+ 
+  const handleVideoCall = () => {
+    console.log("Video call with:", selectedUser.fullName);
+    setShowVideoPreview(true);
+  };
+ 
+  const handleCloseVideoPreview = () => {
+    setShowVideoPreview(false);
+  };
+ 
   return (
     <>
       <div
@@ -36,7 +63,7 @@ function ChatHeader() {
         {/* Animated gradient background beam */}
         <div
           className={`
-            absolute inset-0 rounded-none opacity-0 group-hover:opacity-100
+            absolute inset-0 rounded-none opacity-0 hover:opacity-100
             transition-opacity duration-500 pointer-events-none
             ${
               isOnline
@@ -45,7 +72,7 @@ function ChatHeader() {
             }
           `}
         />
-
+ 
         {/* Left section - User info */}
         <div className="flex items-center space-x-4 relative z-10">
           {/* Avatar container with glow */}
@@ -54,7 +81,7 @@ function ChatHeader() {
             {isOnline && (
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 animate-pulse opacity-75 blur" />
             )}
-
+ 
             {/* Avatar */}
             <div
               className={`
@@ -69,7 +96,7 @@ function ChatHeader() {
                 alt={selectedUser.fullName}
                 className="w-full h-full object-cover"
               />
-
+ 
               {/* Status indicator dot */}
               <div
                 className={`
@@ -84,7 +111,7 @@ function ChatHeader() {
               />
             </div>
           </div>
-
+ 
           {/* User details */}
           <div className="flex flex-col justify-center">
             <h3 className="text-slate-100 font-semibold text-base tracking-tight">
@@ -111,27 +138,70 @@ function ChatHeader() {
             </p>
           </div>
         </div>
-
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className={`
-            relative z-10 p-2 rounded-lg
-            text-slate-400 hover:text-slate-100
-            transition-all duration-200 ease-out
-            hover:bg-slate-700/50 active:scale-95
-            focus:outline-none focus:ring-2 focus:ring-cyan-500/50
-            group
-          `}
-          title="Close (ESC)"
-        >
-          {/* Hover background glow */}
-          <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-cyan-500/10 -z-10" />
-
-          <XIcon className="w-5 h-5 transition-transform duration-200 group-hover:rotate-90 group-active:scale-75" />
-        </button>
+ 
+        {/* Right Actions */}
+        <div className="flex items-center gap-2 relative z-10">
+ 
+          {/* Voice Call */}
+          <button
+            onClick={handleVoiceCall}
+            className="
+              p-2 rounded-xl
+              text-green-400
+              hover:bg-green-500/20
+              hover:text-green-300
+              transition-all duration-200
+              active:scale-95
+            "
+            title="Voice Call"
+          >
+            <PhoneIcon className="w-5 h-5" />
+          </button>
+ 
+          {/* Video Call */}
+          <button
+            onClick={handleVideoCall}
+            className="
+              p-2 rounded-xl
+              text-cyan-400
+              hover:bg-cyan-500/20
+              hover:text-cyan-300
+              transition-all duration-200
+              active:scale-95
+            "
+            title="Video Call"
+          >
+            <VideoIcon className="w-5 h-5" />
+          </button>
+ 
+          {/* Close */}
+          <button
+            onClick={handleClose}
+            className="
+              p-2 rounded-xl
+              text-slate-400
+              hover:bg-slate-700
+              hover:text-white
+              transition-all duration-200
+              active:scale-95
+            "
+            title="Close Chat"
+          >
+            <XIcon className="w-5 h-5" />
+          </button>
+ 
+        </div>
+ 
       </div>
-
+ 
+      {/* Video Preview Modal */}
+      {showVideoPreview && (
+        <VideoPreview 
+          selectedUser={selectedUser}
+          onClose={handleCloseVideoPreview}
+        />
+      )}
+ 
       {/* Add keyframe animations to your global CSS */}
       <style>{`
         @keyframes fadeIn {
@@ -144,7 +214,7 @@ function ChatHeader() {
             transform: translateY(0);
           }
         }
-
+ 
         @keyframes pulse {
           0%, 100% {
             opacity: 1;
@@ -153,15 +223,15 @@ function ChatHeader() {
             opacity: 0.5;
           }
         }
-
+ 
         .animate-fade-in {
           animation: fadeIn 0.3s ease-out forwards;
         }
-
+ 
         .animate-pulse {
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-
+ 
         @media (prefers-reduced-motion: reduce) {
           .animate-fade-in,
           .animate-pulse {
@@ -173,5 +243,5 @@ function ChatHeader() {
     </>
   );
 }
-
+ 
 export default ChatHeader;
