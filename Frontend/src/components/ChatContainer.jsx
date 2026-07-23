@@ -60,7 +60,7 @@ function ChatContainer() {
   return (
     <>
       <ChatHeader />
-      <div className="flex-1 px-6 overflow-y-auto py-8 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-900">
+      <div className="flex-1 px-6 overflow-y-auto py-8 bg-slate-950/20">
         {messages.length > 0 && !isMessagesLoading ? (
           <div className="max-w-3xl mx-auto space-y-4">
             {messages.map((msg, index) => {
@@ -77,12 +77,12 @@ function ChatContainer() {
                 >
                   {/* Quoted replied message */}
                   {msg.replyTo && (
-                    <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-1 opacity-75 max-w-xs truncate bg-slate-800/40 p-1.5 rounded-lg border-l-2 border-cyan-500">
-                      <Reply className="w-3 h-3 text-cyan-400 flex-shrink-0" />
-                      <span className="font-semibold text-cyan-400">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-1 opacity-75 max-w-xs truncate bg-slate-900/60 p-1.5 rounded-lg border-l-2 border-amber-500/60">
+                      <Reply className="w-3 h-3 text-amber-400 flex-shrink-0" />
+                      <span className="font-semibold text-amber-400">
                         {msg.replyTo.senderId === authUser._id ? "You" : selectedUser.fullName}:
                       </span>
-                      <span className="truncate">{msg.replyTo.text || "Media"}</span>
+                      <span className="truncate text-slate-350">{msg.replyTo.text || "Media"}</span>
                     </div>
                   )}
 
@@ -93,8 +93,8 @@ function ChatContainer() {
                       transition-all duration-300 ease-out text-left
                       ${
                         isOwnMessage
-                          ? "bg-gradient-to-br from-cyan-600 to-cyan-700 text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40"
-                          : "bg-gradient-to-br from-slate-800 to-slate-900 text-slate-200 shadow-lg shadow-slate-800/40 hover:shadow-slate-700/60 border border-slate-700/50"
+                          ? "bg-amber-500/20 text-amber-250 border border-amber-500/30 shadow-md"
+                          : "bg-slate-900/80 text-slate-200 border border-slate-800/80 shadow-md"
                       }
                       hover:scale-[1.02] active:scale-95
                     `}
@@ -103,7 +103,7 @@ function ChatContainer() {
                     <div
                       className={`
                         absolute inset-0 opacity-0 group-hover/bubble:opacity-100 transition-opacity duration-300
-                        ${isOwnMessage ? "bg-cyan-400/10" : "bg-slate-400/5"}
+                        ${isOwnMessage ? "bg-white/5" : "bg-slate-800/50"}
                       `}
                     />
 
@@ -132,23 +132,23 @@ function ChatContainer() {
                             <video
                               src={msg.media.url}
                               controls
-                              className="max-w-xs rounded-lg shadow border border-slate-700"
+                              className="max-w-xs rounded-lg shadow border border-slate-800"
                             />
                           )}
                           {msg.media.type === "audio" && (
                             <audio src={msg.media.url} controls className="max-w-xs" />
                           )}
                           {msg.media.type === "file" && (
-                            <div className="flex items-center gap-3 bg-black/20 border border-slate-700/40 p-3 rounded-lg max-w-xs">
-                              <FileText className="w-8 h-8 text-cyan-400" />
+                            <div className="flex items-center gap-3 bg-slate-900 border border-slate-800 p-3 rounded-lg max-w-xs">
+                              <FileText className="w-8 h-8 text-amber-400" />
                               <div className="text-left flex-1 min-w-0">
                                 <p className="text-sm text-slate-200 font-medium truncate">{msg.media.name}</p>
-                                <p className="text-xs text-slate-400">{(msg.media.size / 1024).toFixed(1)} KB</p>
+                                <p className="text-xs text-slate-450">{(msg.media.size / 1024).toFixed(1)} KB</p>
                               </div>
                               <a
                                 href={msg.media.url}
                                 download={msg.media.name}
-                                className="p-2 bg-slate-700 hover:bg-slate-600 rounded text-cyan-400 transition"
+                                className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-amber-400 transition"
                                 title="Download file"
                               >
                                 <Download className="w-4 h-4" />
@@ -165,17 +165,17 @@ function ChatContainer() {
                             type="text"
                             value={editingText}
                             onChange={(e) => setEditingText(e.target.value)}
-                            className="bg-slate-900 border border-slate-700 text-slate-100 rounded px-2 py-1 text-sm focus:outline-none focus:border-cyan-500"
+                            className="bg-slate-950 border border-slate-800 text-slate-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-amber-500"
                           />
                           <button
                             onClick={() => handleSaveEdit(msg._id)}
-                            className="text-xs bg-cyan-500 hover:bg-cyan-600 px-2 py-1 rounded text-white font-medium"
+                            className="text-xs bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 px-2 py-1 rounded text-amber-400 font-medium"
                           >
                             Save
                           </button>
                           <button
                             onClick={() => setEditingMessageId(null)}
-                            className="text-xs bg-slate-700 hover:bg-slate-600 px-2 py-1 rounded text-slate-300"
+                            className="text-xs bg-slate-900 hover:bg-slate-850 border border-slate-800 px-2 py-1 rounded text-slate-400"
                           >
                             Cancel
                           </button>
@@ -200,15 +200,15 @@ function ChatContainer() {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
-                        {msg.isEdited && <span className="text-slate-400 italic font-light ml-1">(edited)</span>}
+                        {msg.isEdited && <span className="text-slate-500 italic font-light ml-1">(edited)</span>}
                         {isOwnMessage && (
                           <span
                             className="ml-1"
                             title={msg.readAt ? `Read at: ${new Date(msg.readAt).toLocaleTimeString()}` : "Delivered to device"}
                           >
-                            {msg.status === "sent" && <span className="text-slate-400">✓</span>}
-                            {msg.status === "delivered" && <span className="text-slate-400">✓✓</span>}
-                            {msg.status === "read" && <span className="text-cyan-400 font-bold">✓✓</span>}
+                            {msg.status === "sent" && <span className="text-slate-500">✓</span>}
+                            {msg.status === "delivered" && <span className="text-slate-500">✓✓</span>}
+                            {msg.status === "read" && <span className="text-amber-400 font-bold">✓✓</span>}
                           </span>
                         )}
                       </p>
@@ -225,7 +225,7 @@ function ChatContainer() {
                             <button
                               key={emoji}
                               onClick={() => reactToMessage(msg._id, emoji)}
-                              className="flex items-center gap-1 bg-black/30 border border-slate-700/40 rounded-full px-2 py-0.5 text-xs hover:bg-slate-800 transition"
+                              className="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-full px-2 py-0.5 text-xs hover:bg-slate-800 transition text-slate-350"
                             >
                               <span>{emoji}</span>
                               <span className="text-[10px] text-slate-400 font-semibold">{count}</span>
@@ -241,13 +241,13 @@ function ChatContainer() {
                     <div
                       className={`
                         absolute top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity
-                        flex items-center gap-1.5 bg-slate-800 border border-slate-700 px-2 py-1 rounded-full shadow-lg z-20
+                        flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2 py-1 rounded-full shadow-lg z-20
                         ${isOwnMessage ? "left-0 -translate-x-full -ml-3" : "right-0 translate-x-full -mr-3"}
                       `}
                     >
                       <button
                         onClick={() => setReplyingTo(msg)}
-                        className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-cyan-400 transition"
+                        className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-amber-400 transition"
                         title="Reply"
                       >
                         <Reply className="w-3.5 h-3.5" />
@@ -257,14 +257,14 @@ function ChatContainer() {
                         <>
                           <button
                             onClick={() => handleStartEdit(msg)}
-                            className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-cyan-400 transition"
+                            className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-amber-400 transition"
                             title="Edit"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDelete(msg._id)}
-                            className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-red-400 transition"
+                            className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-red-400 transition"
                             title="Delete"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -275,12 +275,12 @@ function ChatContainer() {
                       {/* Emoji quick reaction popover trigger */}
                       <div className="relative group/react text-left">
                         <button
-                          className="p-1 hover:bg-slate-700 rounded text-slate-400 hover:text-yellow-400 transition"
+                          className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-amber-400 transition"
                           title="React"
                         >
                           <Smile className="w-3.5 h-3.5" />
                         </button>
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden group-hover/react:flex items-center gap-1 bg-slate-900 border border-slate-700 p-1.5 rounded-full shadow-2xl z-30">
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden group-hover/react:flex items-center gap-1 bg-slate-950 border border-slate-800 p-1.5 rounded-full shadow-2xl z-30">
                           {["👍", "❤️", "😂", "😮", "😢", "🙏"].map((emoji) => (
                             <button
                               key={emoji}
@@ -301,7 +301,7 @@ function ChatContainer() {
             {/* Typing indicator bubble */}
             {typingUsers[selectedUser._id] && (
               <div className="chat chat-start animate-fade-in-up">
-                <div className="chat-bubble bg-gradient-to-br from-slate-800 to-slate-900 text-slate-400 border border-slate-700/50 py-2.5 px-4 rounded-lg flex items-center gap-1.5">
+                <div className="chat-bubble bg-slate-900/80 text-slate-400 border border-slate-800/50 py-2.5 px-4 rounded-lg flex items-center gap-1.5">
                   <span className="text-xs font-medium">{selectedUser.fullName} is typing</span>
                   <div className="flex gap-0.5 items-center mt-1">
                     <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />

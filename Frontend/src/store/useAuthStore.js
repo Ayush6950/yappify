@@ -3,6 +3,7 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { useCallStore } from "./useCallStore";
+import { useChatStore } from "./useChatStore";
 
 const BASE_URL =
   import.meta.env.MODE === "development"
@@ -196,6 +197,13 @@ export const useAuthStore = create((set, get) => ({
 
     newSocket.on("connect_error", (err) => {
       console.log("Socket Error:", err.message);
+    });
+
+    // =========================
+    // New Message Event
+    // =========================
+    newSocket.on("newMessage", (newMessage) => {
+      useChatStore.getState().handleIncomingMessage(newMessage);
     });
 
     // =========================

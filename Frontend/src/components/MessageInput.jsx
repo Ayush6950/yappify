@@ -1,7 +1,6 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import useKeyboardSound from "../hooks/useKeyboardSound";
 import { useChatStore } from "../store/useChatStore";
-import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
 import {
   ImageIcon,
@@ -166,31 +165,31 @@ function MessageInput() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`relative p-4 border-t border-slate-700/50 bg-gradient-to-t from-slate-900 via-slate-900 to-slate-900/50 backdrop-blur-sm transition-all ${
-          isDragging ? "border-cyan-500 bg-cyan-950/20" : ""
+        className={`relative p-4 border-t border-slate-800/80 bg-slate-950/20 backdrop-blur-sm transition-all ${
+          isDragging ? "border-amber-500 bg-amber-500/10" : ""
         }`}
       >
         {isDragging && (
-          <div className="absolute inset-0 flex items-center justify-center bg-cyan-950/30 backdrop-blur-sm z-50 pointer-events-none">
-            <p className="text-cyan-400 font-medium">Drop your file here to upload</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-amber-500/10 backdrop-blur-sm z-50 pointer-events-none">
+            <p className="text-amber-400 font-medium">Drop your file here to upload</p>
           </div>
         )}
 
         {/* Reply Quote Preview */}
         {replyingTo && (
-          <div className="max-w-3xl mx-auto mb-3 flex items-center justify-between bg-slate-800/80 border border-slate-700/50 rounded-lg p-3 animate-slide-up">
+          <div className="max-w-3xl mx-auto mb-3 flex items-center justify-between bg-slate-900/60 border border-slate-800 rounded-lg p-3 animate-slide-up">
             <div className="flex items-center gap-3">
-              <Reply className="w-5 h-5 text-cyan-400" />
+              <Reply className="w-5 h-5 text-amber-400" />
               <div className="text-left">
-                <p className="text-xs text-cyan-400 font-semibold">Replying to message</p>
-                <p className="text-sm text-slate-300 truncate max-w-lg">
+                <p className="text-xs text-amber-400 font-semibold">Replying to message</p>
+                <p className="text-sm text-slate-350 truncate max-w-lg">
                   {replyingTo.text || (replyingTo.media ? "Shared media file" : "Shared image")}
                 </p>
               </div>
             </div>
             <button
               onClick={() => setReplyingTo(null)}
-              className="p-1 rounded-full hover:bg-slate-700 text-slate-400 hover:text-white transition"
+              className="p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition"
             >
               <XIcon className="w-4 h-4" />
             </button>
@@ -200,27 +199,27 @@ function MessageInput() {
         {/* Media / File Attachment Preview */}
         {fileAttachment && (
           <div className="max-w-3xl mx-auto mb-4 animate-slide-up text-left">
-            <div className="relative group inline-block bg-slate-800 border border-slate-700/50 rounded-lg p-3 pr-10">
+            <div className="relative group inline-block bg-slate-900 border border-slate-800 rounded-lg p-3 pr-10">
               <div className="flex items-center gap-3">
                 {fileAttachment.type === "image" && (
                   <img
                     src={fileAttachment.url}
                     alt="Preview"
-                    className="w-12 h-12 object-cover rounded border border-slate-700"
+                    className="w-12 h-12 object-cover rounded border border-slate-800"
                   />
                 )}
                 {fileAttachment.type === "video" && (
-                  <div className="w-12 h-12 bg-slate-700 rounded flex items-center justify-center text-cyan-400">
+                  <div className="w-12 h-12 bg-slate-950 rounded flex items-center justify-center text-amber-400">
                     <Play className="w-5 h-5" />
                   </div>
                 )}
                 {fileAttachment.type === "audio" && (
-                  <div className="w-12 h-12 bg-slate-700 rounded flex items-center justify-center text-cyan-400">
+                  <div className="w-12 h-12 bg-slate-950 rounded flex items-center justify-center text-amber-400">
                     <Music className="w-5 h-5" />
                   </div>
                 )}
                 {fileAttachment.type === "file" && (
-                  <div className="w-12 h-12 bg-slate-700 rounded flex items-center justify-center text-cyan-400">
+                  <div className="w-12 h-12 bg-slate-950 rounded flex items-center justify-center text-amber-400">
                     <FileText className="w-5 h-5" />
                   </div>
                 )}
@@ -241,14 +240,14 @@ function MessageInput() {
 
         {/* Emoji Picker Modal */}
         {showEmojiPicker && (
-          <div className="absolute bottom-20 left-4 z-50 w-72 h-80 bg-slate-950/95 backdrop-blur-md border border-slate-700/60 rounded-xl shadow-2xl p-3 flex flex-col animate-slide-up">
+          <div className="absolute bottom-20 left-4 z-50 w-72 h-80 bg-slate-950 border border-slate-800 rounded-xl shadow-xl p-3 flex flex-col animate-slide-up">
             <div className="flex items-center justify-between mb-2">
               <input
                 type="text"
                 placeholder="Search emojis..."
                 value={emojiSearch}
                 onChange={(e) => setEmojiSearch(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700/50 rounded px-2 py-1 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200 placeholder-slate-650 focus:outline-none focus:border-amber-500 focus:bg-slate-900/80"
               />
               <div className="flex items-center gap-0.5 ml-2">
                 {["", "🏻", "🏼", "🏽", "🏾", "🏿"].map((tone) => (
@@ -257,8 +256,8 @@ function MessageInput() {
                     onClick={() => setSelectedSkinTone(tone)}
                     className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] border transition ${
                       selectedSkinTone === tone
-                        ? "border-cyan-400 bg-slate-700"
-                        : "border-transparent hover:bg-slate-800"
+                        ? "border-amber-500 bg-slate-800"
+                        : "border-transparent hover:bg-slate-900"
                     }`}
                     title={tone ? `Skin Tone ${tone}` : "Default Tone"}
                   >
@@ -271,7 +270,7 @@ function MessageInput() {
             <div className="flex-1 overflow-y-auto pr-1 text-left space-y-3">
               {emojiSearch ? (
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">
+                  <h4 className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">
                     Search Results
                   </h4>
                   <div className="grid grid-cols-6 gap-1">
@@ -297,7 +296,7 @@ function MessageInput() {
                 <>
                   {recentEmojis.length > 0 && (
                     <div>
-                      <h4 className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">
+                      <h4 className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">
                         Recent
                       </h4>
                       <div className="grid grid-cols-6 gap-1">
@@ -316,7 +315,7 @@ function MessageInput() {
 
                   {Object.entries(EMOJI_CATEGORIES).map(([cat, list]) => (
                     <div key={cat}>
-                      <h4 className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-1">
+                      <h4 className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">
                         {cat}
                       </h4>
                       <div className="grid grid-cols-6 gap-1">
@@ -347,8 +346,8 @@ function MessageInput() {
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className={`p-3 rounded-lg bg-slate-800/50 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-all ${
-              showEmojiPicker ? "text-cyan-400 bg-cyan-950/20" : ""
+            className={`p-3 rounded-lg bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all ${
+              showEmojiPicker ? "text-amber-400 bg-amber-500/10" : ""
             }`}
             title="Emoji picker"
           >
@@ -359,7 +358,7 @@ function MessageInput() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="p-3 rounded-lg bg-slate-800/50 text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-all"
+            className="p-3 rounded-lg bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all"
             title="Attach file"
           >
             <Paperclip className="w-5 h-5" />
@@ -367,22 +366,14 @@ function MessageInput() {
 
           {/* Text Input */}
           <div className="flex-1 relative group">
-            <div
-              className={`absolute -inset-0.5 rounded-lg bg-gradient-to-r from-cyan-500/0 to-blue-500/0 transition-all duration-300 pointer-events-none blur ${
-                isFocused ? "from-cyan-500/30 to-blue-500/30 opacity-100" : "opacity-0"
-              }`}
-            />
-
             <input
               type="text"
               value={text}
               onChange={handleInputChange}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              className={`relative w-full bg-slate-800/50 border-2 rounded-lg py-3 px-4 text-slate-100 placeholder-slate-500 transition-all duration-300 focus:outline-none ${
-                isFocused
-                  ? "border-cyan-500/50 bg-slate-800/80 shadow-lg shadow-cyan-500/20"
-                  : "border-slate-700/50 hover:border-slate-600/50"
+              className={`relative w-full bg-slate-900/60 border border-slate-800 rounded-lg py-3 px-4 text-slate-200 placeholder-slate-600 transition-all duration-300 focus:outline-none focus:bg-slate-900 focus:border-amber-500 ${
+                isFocused ? "shadow-sm shadow-amber-500/5" : ""
               }`}
               placeholder="Type your message..."
             />
@@ -392,22 +383,16 @@ function MessageInput() {
           <button
             type="submit"
             disabled={!hasContent || isSending}
-            className={`relative px-4 py-3 rounded-lg font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-cyan-500/50 group disabled:cursor-not-allowed ${
+            className={`relative px-4 py-3 rounded-lg font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-amber-500/50 group disabled:cursor-not-allowed ${
               hasContent && !isSending
-                ? "bg-gradient-to-r from-cyan-500 to-cyan-600 text-white shadow-lg shadow-cyan-500/40 hover:shadow-cyan-500/60 hover:from-cyan-600 hover:to-cyan-700 active:scale-95"
-                : "bg-slate-800/50 text-slate-500 opacity-50"
+                ? "bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 active:scale-95 shadow-lg shadow-amber-500/5"
+                : "bg-slate-900/40 text-slate-600 border border-slate-800/50 cursor-not-allowed"
             }`}
             title={isSending ? "Sending..." : "Send message"}
           >
-            <div
-              className={`absolute -inset-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur ${
-                hasContent && !isSending ? "bg-cyan-500/50" : ""
-              }`}
-            />
-
             <div className="relative flex items-center justify-center h-5 w-5">
               {isSending ? (
-                <div className="w-4 h-4 border-2 border-cyan-200 border-t-white rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-amber-250 border-t-white rounded-full animate-spin" />
               ) : (
                 <SendIcon className="w-5 h-5 transition-all duration-200 group-hover:translate-x-1 group-hover:-translate-y-1 group-active:scale-75" />
               )}
