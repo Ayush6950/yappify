@@ -3,6 +3,7 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 import { useCallStore } from "./useCallStore";
+import { useChatStore } from "./useChatStore";
 
 const BASE_URL =
   import.meta.env.MODE === "development"
@@ -199,6 +200,13 @@ export const useAuthStore = create((set, get) => ({
     });
 
     // =========================
+    // New Message Event
+    // =========================
+    newSocket.on("newMessage", (newMessage) => {
+      useChatStore.getState().handleIncomingMessage(newMessage);
+    });
+
+    // =========================
     // Online Users
     // =========================
 
@@ -206,6 +214,18 @@ export const useAuthStore = create((set, get) => ({
       set({
         onlineUsers: users,
       });
+    });
+
+    newSocket.on("user_online", (userId) => {
+      set((state) => ({
+        onlineUsers: state.onlineUsers.includes(userId) ? state.onlineUsers : [...state.onlineUsers, userId],
+      }));
+    });
+
+    newSocket.on("user_offline", (userId) => {
+      set((state) => ({
+        onlineUsers: state.onlineUsers.filter((id) => id !== userId),
+      }));
     });
 
     // =========================

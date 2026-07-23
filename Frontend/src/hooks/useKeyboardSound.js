@@ -1,3 +1,5 @@
+import { useChatStore } from "../store/useChatStore";
+
 // audio setup
 const keyStrokeSounds = [
   new Audio("/sounds/keystroke1.mp3"),
@@ -7,9 +9,13 @@ const keyStrokeSounds = [
 ];
 
 function useKeyboardSound() {
-  const playRandomKeyStrokeSound = () => {
-    const randomSound = keyStrokeSounds[Math.floor(Math.random() * keyStrokeSounds.length)];
+  const { isKeystrokeSoundEnabled, notificationVolume } = useChatStore();
 
+  const playRandomKeyStrokeSound = () => {
+    if (!isKeystrokeSoundEnabled) return;
+
+    const randomSound = keyStrokeSounds[Math.floor(Math.random() * keyStrokeSounds.length)];
+    randomSound.volume = notificationVolume;
     randomSound.currentTime = 0; // this is for a better UX, def add this
     randomSound.play().catch((error) => console.log("Audio play failed:", error));
   };

@@ -8,103 +8,61 @@ const NoChatHistoryPlaceholder = ({ name }) => {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-6 animate-fade-in">
+    <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-transparent animate-fade-in">
       {/* Icon container with floating animation */}
       <div className="relative mb-6">
-        {/* Animated glow rings */}
-        <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-lg animate-pulse opacity-75" />
-        <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-full blur-md animate-pulse animation-delay-300" />
-
-        {/* Icon background with glow */}
+        {/* Icon background */}
         <div className="
           relative w-16 h-16 
-          bg-gradient-to-br from-cyan-500/30 to-blue-500/20
+          bg-amber-500/10
           rounded-full flex items-center justify-center
-          border-2 border-cyan-500/30
-          shadow-lg shadow-cyan-500/30
+          border-2 border-amber-500/20
+          shadow-sm
           animate-float
         ">
-          <MessageCircleIcon className="size-8 text-cyan-300 drop-shadow-lg" />
+          <MessageCircleIcon className="size-8 text-amber-400" />
         </div>
       </div>
 
-      {/* Heading with staggered animation */}
-      <h3 className="
-        text-xl font-semibold text-slate-100 mb-4
-        animate-slide-up
-        bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent
-      ">
+      {/* Heading */}
+      <h3 className="text-xl font-semibold text-slate-200 mb-4 animate-slide-up">
         Start your conversation with <span className="font-bold">{name}</span>
       </h3>
 
-      {/* Description section with staggered animation */}
+      {/* Description section */}
       <div className="flex flex-col space-y-4 max-w-md mb-8 animate-slide-up animation-delay-150">
-        <p className="text-slate-400 text-sm leading-relaxed">
+        <p className="text-slate-450 text-sm leading-relaxed">
           This is the beginning of your conversation. Send a message to start chatting!
         </p>
 
         {/* Animated divider line */}
         <div className="flex items-center justify-center gap-3">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
-          <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 animate-pulse" />
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+          <div className="h-px flex-1 bg-slate-800" />
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+          <div className="h-px flex-1 bg-slate-800" />
         </div>
       </div>
 
-      {/* Suggestion buttons with staggered animation */}
+      {/* Suggestion buttons */}
       <div className="flex flex-wrap gap-3 justify-center animate-slide-up animation-delay-300">
         {suggestions.map((suggestion, index) => (
           <button
             key={index}
             className={`
-              relative group px-4 py-2 text-xs font-medium
+              relative px-4 py-2 text-xs font-medium
               rounded-full transition-all duration-300 ease-out
-              focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:ring-offset-2 focus:ring-offset-slate-900
-              overflow-hidden
+              focus:outline-none focus:ring-2 focus:ring-amber-500/50
+              overflow-hidden bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20
+              text-amber-400
             `}
             style={{
               animation: `slideUp 0.5s ease-out ${500 + suggestion.delay}ms both`,
             }}
             title={`Send "${suggestion.emoji} ${suggestion.text}"`}
           >
-            {/* Animated background gradient */}
-            <div
-              className={`
-                absolute inset-0 bg-gradient-to-r from-cyan-600/0 to-cyan-600/0
-                group-hover:from-cyan-600/20 group-hover:to-cyan-600/10
-                transition-all duration-300 ease-out -z-10
-              `}
-            />
-
-            {/* Base background */}
-            <div className={`
-              absolute inset-0 -z-10 bg-cyan-500/10 rounded-full
-              transition-all duration-300
-              group-hover:bg-cyan-500/20 group-active:bg-cyan-500/30
-            `} />
-
-            {/* Shine effect on hover */}
-            <div
-              className={`
-                absolute inset-0 opacity-0 group-hover:opacity-100
-                transition-opacity duration-300 -z-10
-                bg-gradient-to-r from-transparent via-white/10 to-transparent
-                translate-x-full group-hover:translate-x-0 duration-500
-              `}
-            />
-
             {/* Content */}
-            <span className={`
-              relative flex items-center gap-2
-              text-cyan-300 group-hover:text-cyan-200
-              transition-colors duration-300
-              group-hover:scale-105 group-active:scale-95
-              inline-block
-            `}>
-              <span className={`
-                inline-block transition-transform duration-300
-                group-hover:-rotate-12 group-hover:scale-125
-              `}>
+            <span className="relative flex items-center gap-2">
+              <span className="inline-block transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-125">
                 {suggestion.emoji}
               </span>
               {suggestion.text}

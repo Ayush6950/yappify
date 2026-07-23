@@ -1,5 +1,5 @@
+
 import { useChatStore } from "../store/useChatStore";
-import BorderAnimatedContainer from "../components/BorderAnimatedContainer";
 import ProfileHeader from "../components/ProfileHeader";
 import ActiveTabSwitch from "../components/ActiveTabSwitch";
 import ChatsList from "../components/ChatsList";
@@ -12,32 +12,23 @@ function ChatPage() {
 
   return (
     <div className="w-full max-w-6xl h-[800px]">
-     
-      <BorderAnimatedContainer>
+      <div className="w-full h-full flex rounded-2xl border border-slate-800/80 bg-slate-950/80 shadow-2xl backdrop-blur-md overflow-hidden">
         {/* LEFT SIDEBAR */}
-        <div className="
-          w-80 bg-slate-800/40 backdrop-blur-sm flex flex-col
-          border-r border-slate-700/50
-        ">
+        <div className="w-96 flex flex-col border-r border-slate-800/80 bg-slate-900/20">
           <ProfileHeader />
           <ActiveTabSwitch />
 
           {/* List Container */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          <div className="flex-1 overflow-y-auto p-3 space-y-1">
             {activeTab === "chats" ? <ChatsList /> : <ContactList />}
           </div>
-
-        
         </div>
 
         {/* RIGHT CHAT AREA */}
-        <div className="
-          flex-1 flex flex-col bg-slate-900/30 backdrop-blur-sm
-        ">
+        <div className="flex-1 flex flex-col bg-slate-950/30">
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
-      </BorderAnimatedContainer>
-      
+      </div>
 
       <style>{`
         @media (prefers-reduced-motion: reduce) {
