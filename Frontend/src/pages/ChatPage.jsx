@@ -1,20 +1,30 @@
 
+import { useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
+import { useAIStore } from "../store/useAIStore";
 import ProfileHeader from "../components/ProfileHeader";
 import ActiveTabSwitch from "../components/ActiveTabSwitch";
 import ChatsList from "../components/ChatsList";
 import ContactList from "../components/ContactList";
 import ChatContainer from "../components/ChatContainer";
 import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
+import AIPanel from "../components/AIPanel";
 
 function ChatPage() {
   const { activeTab, selectedUser } = useChatStore();
+  const { isPanelOpen, closePanel } = useAIStore();
+
+  useEffect(() => {
+    if (!selectedUser && isPanelOpen) {
+      closePanel();
+    }
+  }, [selectedUser, isPanelOpen, closePanel]);
 
   return (
-    <div className="w-full max-w-6xl h-[800px]">
+    <div className={`w-full h-[800px] ${isPanelOpen ? "max-w-7xl" : "max-w-6xl"}`}>
       <div className="w-full h-full flex rounded-2xl border border-slate-800/80 bg-slate-950/80 shadow-2xl backdrop-blur-md overflow-hidden">
         {/* LEFT SIDEBAR */}
-        <div className="w-96 flex flex-col border-r border-slate-800/80 bg-slate-900/20">
+        <div className="w-96 flex flex-col border-r border-slate-800/80 bg-slate-900/20 shrink-0">
           <ProfileHeader />
           <ActiveTabSwitch />
 
@@ -24,10 +34,13 @@ function ChatPage() {
           </div>
         </div>
 
-        {/* RIGHT CHAT AREA */}
-        <div className="flex-1 flex flex-col bg-slate-950/30">
+        {/* CENTER CHAT AREA */}
+        <div className="flex-1 flex flex-col bg-slate-950/30 min-w-0">
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
+
+        {/* AI PANEL */}
+        {isPanelOpen && selectedUser && <AIPanel />}
       </div>
 
       <style>{`
