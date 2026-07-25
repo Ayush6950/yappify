@@ -2,30 +2,32 @@ import "dotenv/config";
 import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
-
+import cors from "cors";
+import aiRoutes from "./routes/ai.routes.js";
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
 import authRoutes from "./routes/auth.routes.js";
-import messageroutes from "./routes/message.routes.js";
-import cors from "cors";
+import messageRoutes from "./routes/message.routes.js";
 
 const __dirname = path.resolve();
 const PORT = ENV.PORT || 3000;
 
 app.use(express.json());
+
 app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
   })
 );
+
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/messages", messageroutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/ai", aiRoutes);
 
-// Serve frontend in production
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 
@@ -35,10 +37,15 @@ if (ENV.NODE_ENV === "production") {
 }
 
 const startServer = async () => {
-  await connectDB();
-  server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+  try {
+    await connectDB();
+
+    server.listen(PORT, () => {
+      console.log(`✅ Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+  }
 };
 
-startServer(); 
+startServer();

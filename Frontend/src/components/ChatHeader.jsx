@@ -2,12 +2,14 @@
 import { useChatStore } from "../store/useChatStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { XIcon, PhoneIcon, VideoIcon, Volume2Icon, VolumeXIcon } from "lucide-react";
+import { XIcon, PhoneIcon, VideoIcon, Volume2Icon, VolumeXIcon, Sparkles } from "lucide-react";
 import { useCallStore } from "../store/useCallStore";
+import { useAIStore } from "../store/useAIStore";
  
 function ChatHeader() {
   const { selectedUser, setSelectedUser, mutedUsers, toggleUserMute } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  const { isPanelOpen, togglePanel } = useAIStore();
   
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -119,6 +121,21 @@ function ChatHeader() {
         {/* Right Actions */}
         <div className="flex items-center gap-2 relative z-10">
  
+          {/* AI Assistant Toggle */}
+          <button
+            onClick={togglePanel}
+            className={`
+              p-2 rounded-xl transition-all duration-200 active:scale-95
+              ${isPanelOpen
+                ? "text-violet-400 bg-violet-500/10"
+                : "text-slate-400 hover:bg-slate-800 hover:text-violet-300"
+              }
+            `}
+            title="AI Assistant"
+          >
+            <Sparkles className="w-5 h-5" />
+          </button>
+
           {/* Mute Chat Toggle */}
           <button
             onClick={() => toggleUserMute(selectedUser._id)}
