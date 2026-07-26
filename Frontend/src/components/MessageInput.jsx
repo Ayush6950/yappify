@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import useKeyboardSound from "../hooks/useKeyboardSound";
 import { useChatStore } from "../store/useChatStore";
 import toast from "react-hot-toast";
@@ -43,6 +43,7 @@ function MessageInput() {
   const [isDragging, setIsDragging] = useState(false);
 
   const fileInputRef = useRef(null);
+  const inputRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const [isTyping, setIsTyping] = useState(false);
 
@@ -54,7 +55,18 @@ function MessageInput() {
     sendTypingEnd,
     replyingTo,
     setReplyingTo,
+    draftMessage,
+    clearDraftMessage,
   } = useChatStore();
+
+  // Sync AI draft into composer
+  useEffect(() => {
+    if (draftMessage) {
+      setText(draftMessage);
+      clearDraftMessage();
+      inputRef.current?.focus();
+    }
+  }, [draftMessage, clearDraftMessage]);
 
   const [recentEmojis, setRecentEmojis] = useState(() => {
     return JSON.parse(localStorage.getItem("recent_emojis")) || ["👍", "❤️", "😂", "😮", "😢", "🙏"];
@@ -367,6 +379,7 @@ function MessageInput() {
           {/* Text Input */}
           <div className="flex-1 relative group">
             <input
+              ref={inputRef}
               type="text"
               value={text}
               onChange={handleInputChange}
