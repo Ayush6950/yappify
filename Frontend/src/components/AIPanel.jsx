@@ -2,6 +2,17 @@ import { useEffect } from "react";
 import { Sparkles, X, Loader2, Square } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
 import { useAIStore } from "../store/useAIStore";
+import { SUPPORTED_LANGUAGES } from "../lib/aiUtils";
+import AIQuickActions from "./AIQuickActions";
+import AISuggestionChips from "./AISuggestionChips";
+import AISearchFooter from "./AISearchFooter";
+
+const LOADING_LABELS = {
+  summarize: "Summarizing...",
+  "suggest-reply": "Generating replies...",
+  translate: "Translating...",
+  "explain-code": "Explaining code..."
+};
 
 function AIPanel() {
   const { selectedUser } = useChatStore();
@@ -12,10 +23,17 @@ function AIPanel() {
     error,
     messageCount,
     contextPartnerId,
+    suggestions,
+    selectedMessage,
+    targetLanguage,
+    originalText,
     closePanel,
     cancelStream,
     runAction,
     resetForPartnerChange,
+    useSuggestionAsReply,
+    setTargetLanguage,
+    askAssistant, assistantMessages,
   } = useAIStore();
 
   useEffect(() => {
@@ -27,9 +45,10 @@ function AIPanel() {
 
   if (!selectedUser) return null;
 
-  const handleSummarize = () => {
-    runAction("summarize");
-  };
+  const showSuggestions = lastAction === "suggest-reply" && suggestions.length > 0;
+  const showStreaming = streamingText && lastAction !== "suggest-reply";
+  const showEmpty =
+    !streamingText && !isLoading && !error && !showSuggestions;
 
   return (
     <div className="w-80 flex flex-col border-l border-slate-800/80 bg-slate-900/40 animate-fade-in">
@@ -57,44 +76,71 @@ function AIPanel() {
         </button>
       </div>
 
-      {/* Quick actions */}
-      <div className="px-4 py-3 border-b border-slate-800/80">
-        <p className="text-xs text-slate-500 mb-2">Quick actions</p>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleSummarize}
-            disabled={isLoading}
-            className="
-              px-3 py-1.5 rounded-lg text-xs font-medium
-              bg-violet-500/10 text-violet-300 border border-violet-500/20
-              hover:bg-violet-500/20 transition-colors
-              disabled:opacity-50 disabled:cursor-not-allowed
-            "
-          >
-            Summarize
-          </button>
-        </div>
+      <AIQuickActions
+        isLoading={isLoading}
+        onAction={runAction}
+      />
+
+      {/* Language picker for translate */}
+      <div className="px-4 py-2 border-b border-slate-800/80">
+        <label className="text-xs text-slate-500 mb-1 block">Translate to</label>
+        <select
+          value={targetLanguage}
+          onChange={(e) => setTargetLanguage(e.target.value)}
+          className="
+            w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5
+            text-xs text-slate-300 focus:outline-none focus:border-violet-500/50
+          "
+        >
+          {SUPPORTED_LANGUAGES.map(({ code, label }) => (
+            <option key={code} value={code}>
+              {label}
+            </option>
+          ))}
+        </select>
       </div>
+
+      {/* Selected message context */}
+      {selectedMessage && (
+        <div className="px-4 py-2 border-b border-slate-800/80 bg-slate-950/30">
+          <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">
+            Selected message
+          </p>
+          <p className="text-xs text-slate-400 line-clamp-2">
+            {selectedMessage.text || "Media message"}
+          </p>
+        </div>
+      )}
 
       {/* Output area */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
-        {!streamingText && !isLoading && !error && (
+        {assistantMessages.length > 0 && (
+          <div className="space-y-3 mb-4">
+            <p className="text-xs text-violet-300 font-medium">AI Assistant</p>
+            {assistantMessages.map((message, index) => (
+              <div key={index} className={`rounded-lg p-2.5 text-sm whitespace-pre-wrap ${message.role === "user" ? "bg-slate-800 text-slate-300 ml-5" : "bg-violet-500/10 border border-violet-500/20 text-slate-200 mr-2"}`}>{message.content}</div>
+            ))}
+            {isLoading && lastAction === "assistant-chat" && <Loader2 className="w-4 h-4 text-violet-400 animate-spin" />}
+          </div>
+        )}
+
+                {showEmpty && (
           <div className="text-center py-8">
             <Sparkles className="w-8 h-8 text-slate-700 mx-auto mb-3" />
             <p className="text-sm text-slate-500">
               Ask AI to help with this conversation
             </p>
             <p className="text-xs text-slate-600 mt-1">
-              Try summarizing the chat with {selectedUser.fullName}
+              Summarize, suggest replies, translate, or explain code
             </p>
           </div>
         )}
 
-        {isLoading && !streamingText && (
+        {isLoading && !streamingText && !showSuggestions && (
           <div className="flex items-center gap-2 text-slate-400">
             <Loader2 className="w-4 h-4 animate-spin" />
             <span className="text-sm">
-              {lastAction === "summarize" ? "Summarizing..." : "Thinking..."}
+              {LOADING_LABELS[lastAction] || "Thinking..."}
             </span>
           </div>
         )}
@@ -105,9 +151,24 @@ function AIPanel() {
           </div>
         )}
 
-        {streamingText && (
+        {showSuggestions && (
+          <AISuggestionChips
+            suggestions={suggestions}
+            onUseAsReply={useSuggestionAsReply}
+          />
+        )}
+
+        {showStreaming && (
           <div className="space-y-2">
-            {messageCount > 0 && (
+            {originalText && (lastAction === "translate" || lastAction === "explain-code") && (
+              <div className="p-2 rounded-lg bg-slate-950/50 border border-slate-800/60">
+                <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">
+                  Original
+                </p>
+                <p className="text-xs text-slate-500 line-clamp-3">{originalText}</p>
+              </div>
+            )}
+            {messageCount > 0 && lastAction === "summarize" && (
               <p className="text-xs text-slate-600">
                 Based on {messageCount} recent message{messageCount !== 1 ? "s" : ""}
               </p>
@@ -137,9 +198,8 @@ function AIPanel() {
             Stop generating
           </button>
         )}
-        <p className="text-[10px] text-slate-600 text-center">
-          AI reads messages in this chat to assist you
-        </p>
+       <AISearchFooter onSearch={askAssistant} isLoading={isLoading} />
+
       </div>
 
       <style>{`

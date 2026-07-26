@@ -69,6 +69,7 @@ export const useChatStore = create((set, get) => ({
   unreadCounts: {},
   typingUsers: {}, // { [userId]: boolean }
   replyingTo: null, // message object
+  draftMessage: "", // AI-suggested reply draft for composer
 
   toggleSound: () => {
     const nextVal = !get().isSoundEnabled;
@@ -158,6 +159,7 @@ export const useChatStore = create((set, get) => ({
     set((state) => ({
       selectedUser,
       replyingTo: null,
+      draftMessage: "",
       unreadCounts: selectedUser
         ? { ...state.unreadCounts, [selectedUser._id]: 0 }
         : state.unreadCounts,
@@ -165,6 +167,10 @@ export const useChatStore = create((set, get) => ({
   },
 
   setReplyingTo: (message) => set({ replyingTo: message }),
+
+  setDraftMessage: (text) => set({ draftMessage: text }),
+
+  clearDraftMessage: () => set({ draftMessage: "" }),
 
   sendTypingStart: (receiverId) => {
     const socket = useAuthStore.getState().socket;

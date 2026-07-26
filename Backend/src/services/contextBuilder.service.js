@@ -77,3 +77,55 @@ export const contextToPromptText = (context) => {
     })
     .join("\n");
 };
+
+export const getLastIncomingMessage = (context) => {
+  for (let i = context.messages.length - 1; i >= 0; i--) {
+    if (context.messages[i].role === "them") {
+      return context.messages[i];
+    }
+  }
+  return null;
+};
+
+export const buildMessageContext = async (userId, partnerId, messageId) => {
+  if (!mongoose.Types.ObjectId.isValid(partnerId)) {
+    throw new Error("Invalid partner ID");
+  }
+  if (!mongoose.Types.ObjectId.isValid(messageId)) {
+    throw new Error("Invalid message ID");
+  }
+
+  const partner = await User.findById(partnerId).select("fullName");
+  if (!partner) {
+    throw new Error("Partner not found");
+  }
+
+  const me = await User.findById(userId).select("fullName");
+  if (!me) {
+    throw new Error("User not found");
+  }
+
+  const message = await Message.findOne({
+    _id: messageId,
+    isDeleted: { $ne: true },
+    $or: [
+      { senderId: userId, receiverId: partnerId },
+      { senderId: partnerId, receiverId: userId },
+    ],
+  }).lean();
+
+  if (!message) {
+    throw new Error("Message not found");
+  }
+
+  const formatted = formatMessage(message, userId, partner.fullName, me.fullName);
+
+  return {
+    me: { id: userId, fullName: me.fullName },
+    partner: { id: partnerId, fullName: partner.fullName },
+    message: {
+      id: message._id,
+      ...formatted,
+    },
+  };
+};

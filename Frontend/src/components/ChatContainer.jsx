@@ -5,7 +5,9 @@ import ChatHeader from "./ChatHeader";
 import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
 import MessageInput from "./MessageInput";
 import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton";
-import { Reply, Edit3, Trash2, Smile, FileText, Download, Play, Music } from "lucide-react";
+import { Reply, Edit3, Trash2, Smile, FileText, Download, Play, Music, Languages, Code2 } from "lucide-react";
+import { useAIStore } from "../store/useAIStore";
+import { hasCodeContent } from "../lib/aiUtils";
 
 function ChatContainer() {
   const {
@@ -21,6 +23,7 @@ function ChatContainer() {
     reactToMessage,
     setReplyingTo,
   } = useChatStore();
+  const { openPanelWithMessage } = useAIStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
@@ -274,6 +277,26 @@ function ChatContainer() {
                         >
                           <Reply className="w-3.5 h-3.5" />
                         </button>
+
+                        {msg.text && !msg.isDeleted && (
+                          <button
+                            onClick={() => openPanelWithMessage(msg, "translate")}
+                            className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-violet-400 transition"
+                            title="Translate with AI"
+                          >
+                            <Languages className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+
+                        {hasCodeContent(msg.text, msg.media?.name) && !msg.isDeleted && (
+                          <button
+                            onClick={() => openPanelWithMessage(msg, "explain-code")}
+                            className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-violet-400 transition"
+                            title="Explain code"
+                          >
+                            <Code2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
 
                         {isOwnMessage && (
                           <>
