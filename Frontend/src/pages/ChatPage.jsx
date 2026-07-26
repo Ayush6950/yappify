@@ -9,6 +9,7 @@ import ContactList from "../components/ContactList";
 import ChatContainer from "../components/ChatContainer";
 import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
 import AIPanel from "../components/AIPanel";
+import AIChatConversation from "../components/AIChatConversation";
 
 function ChatPage() {
   const { activeTab, selectedUser } = useChatStore();
@@ -36,11 +37,11 @@ function ChatPage() {
 
         {/* CENTER CHAT AREA */}
         <div className="flex-1 flex flex-col bg-slate-950/30 min-w-0">
-          {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+          {selectedUser?.isAIProfile ? <AIChatConversation /> : selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
 
         {/* AI PANEL */}
-        {isPanelOpen && selectedUser && <AIPanel />}
+        {isPanelOpen && selectedUser && !selectedUser.isAIProfile && <AIPanel />}
       </div>
 
       <style>{`
