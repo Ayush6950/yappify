@@ -9,8 +9,8 @@ const IncomingCallModal = () => {
   if (!incomingCall) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-[9999] animate-fade-in">
-      <div className="bg-slate-800 border border-slate-700/80 rounded-2xl shadow-2xl p-8 w-[350px] text-center max-w-[90%] transform scale-100 transition-all duration-300">
+    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-[9999] animate-fade-in p-4">
+      <div className="bg-slate-800 border border-slate-700/80 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-sm sm:w-[350px] text-center transform scale-100 transition-all duration-300">
         <div className="flex flex-col items-center">
           {/* Avatar with glowing heartbeat animation */}
           <div className="relative">

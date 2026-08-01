@@ -5,38 +5,38 @@ import { useAuthStore } from "../store/useAuthStore";
 import { XIcon, PhoneIcon, VideoIcon, Volume2Icon, VolumeXIcon, Sparkles } from "lucide-react";
 import { useCallStore } from "../store/useCallStore";
 import { useAIStore } from "../store/useAIStore";
- 
+
 function ChatHeader() {
   const { selectedUser, setSelectedUser, mutedUsers, toggleUserMute } = useChatStore();
   const { onlineUsers } = useAuthStore();
   const { isPanelOpen, togglePanel } = useAIStore();
-  
+
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === "Escape") {
         setSelectedUser(null);
       }
     };
- 
+
     window.addEventListener("keydown", handleEscKey);
- 
+
     return () => window.removeEventListener("keydown", handleEscKey);
   }, [setSelectedUser]);
-  
+
   // Add null check after hook
   if (!selectedUser) return null;
-  
+
   const isOnline = onlineUsers.includes(selectedUser._id);
- 
+
   const handleClose = () => {
     setSelectedUser(null);
   };
- 
+
   // ✅ Add these missing handlers
   const handleVoiceCall = () => {
     useCallStore.getState().startCall({ user: selectedUser, callType: "voice" });
   };
- 
+
   const handleVideoCall = () => {
     useCallStore.getState().startCall({ user: selectedUser, callType: "video" });
   };
@@ -44,18 +44,18 @@ function ChatHeader() {
     <>
       <div
         className="
-          relative flex justify-between items-center px-6 py-4 flex-none h-[84px]
+          relative flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 flex-none h-16 sm:h-[84px]
           bg-slate-900/20 border-b border-slate-800/80 animate-fade-in
         "
       >
         {/* Left section - User info */}
-        <div className="flex items-center space-x-4 relative z-10">
+        <div className="flex items-center space-x-3 sm:space-x-4 relative z-10 flex-1 min-w-0 mr-2">
           {/* Avatar container */}
           <div className="relative">
             {/* Avatar */}
             <div
               className={`
-                relative w-12 h-12 rounded-full overflow-hidden
+                relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex-shrink-0
                 transition-transform duration-300 hover:scale-110
                 border-2 ${isOnline ? "border-emerald-500/50" : "border-slate-800"}
               `}
@@ -65,34 +65,32 @@ function ChatHeader() {
                 alt={selectedUser.fullName}
                 className="w-full h-full object-cover"
               />
- 
+
               {/* Status indicator dot */}
               <div
                 className={`
                   absolute bottom-0 right-0 w-3 h-3 rounded-full
                   border-2 border-slate-950 transition-all duration-300
-                  ${
-                    isOnline
-                      ? "bg-green-500"
-                      : "bg-slate-700"
+                  ${isOnline
+                    ? "bg-green-500"
+                    : "bg-slate-700"
                   }
                 `}
               />
             </div>
           </div>
- 
+
           {/* User details */}
-          <div className="flex flex-col justify-center">
-            <h3 className="text-slate-200 font-semibold text-base tracking-tight">
+          <div className="flex flex-col justify-center min-w-0">
+            <h3 className="text-slate-200 font-semibold text-sm sm:text-base tracking-tight truncate">
               {selectedUser.fullName}
             </h3>
             <p
               className={`
                 text-xs font-medium transition-all duration-300
-                ${
-                  isOnline
-                    ? "text-emerald-500 font-semibold"
-                    : "text-slate-500"
+                ${isOnline
+                  ? "text-emerald-500 font-semibold"
+                  : "text-slate-500"
                 }
               `}
             >
@@ -117,15 +115,15 @@ function ChatHeader() {
             </p>
           </div>
         </div>
- 
+
         {/* Right Actions */}
-        <div className="flex items-center gap-2 relative z-10">
- 
+        <div className="flex items-center gap-1 sm:gap-2 relative z-10 flex-shrink-0">
+
           {/* AI Assistant Toggle */}
           <button
             onClick={togglePanel}
             className={`
-              p-2 rounded-xl transition-all duration-200 active:scale-95
+              p-1.5 sm:p-2 rounded-xl transition-all duration-200 active:scale-95
               ${isPanelOpen
                 ? "text-violet-400 bg-violet-500/10"
                 : "text-slate-400 hover:bg-slate-800 hover:text-violet-300"
@@ -133,14 +131,14 @@ function ChatHeader() {
             `}
             title="AI Assistant"
           >
-            <Sparkles className="w-5 h-5" />
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Mute Chat Toggle */}
           <button
             onClick={() => toggleUserMute(selectedUser._id)}
             className={`
-              p-2 rounded-xl transition-all duration-200 active:scale-95
+              p-1.5 sm:p-2 rounded-xl transition-all duration-200 active:scale-95
               ${mutedUsers.includes(selectedUser._id)
                 ? "text-red-400 hover:bg-red-500/10"
                 : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
@@ -149,17 +147,17 @@ function ChatHeader() {
             title={mutedUsers.includes(selectedUser._id) ? "Unmute Notifications" : "Mute Notifications"}
           >
             {mutedUsers.includes(selectedUser._id) ? (
-              <VolumeXIcon className="w-5 h-5" />
+              <VolumeXIcon className="w-4 h-4 sm:w-5 sm:h-5" />
             ) : (
-              <Volume2Icon className="w-5 h-5" />
+              <Volume2Icon className="w-4 h-4 sm:w-5 sm:h-5" />
             )}
           </button>
- 
+
           {/* Voice Call */}
           <button
             onClick={handleVoiceCall}
             className="
-              p-2 rounded-xl
+              p-1.5 sm:p-2 rounded-xl
               text-amber-400
               hover:bg-amber-500/10
               transition-all duration-200
@@ -167,14 +165,14 @@ function ChatHeader() {
             "
             title="Voice Call"
           >
-            <PhoneIcon className="w-5 h-5" />
+            <PhoneIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
- 
+
           {/* Video Call */}
           <button
             onClick={handleVideoCall}
             className="
-              p-2 rounded-xl
+              p-1.5 sm:p-2 rounded-xl
               text-amber-400
               hover:bg-amber-500/10
               transition-all duration-200
@@ -182,14 +180,14 @@ function ChatHeader() {
             "
             title="Video Call"
           >
-            <VideoIcon className="w-5 h-5" />
+            <VideoIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
- 
+
           {/* Close */}
           <button
             onClick={handleClose}
             className="
-              p-2 rounded-xl
+              p-1.5 sm:p-2 rounded-xl
               text-slate-400
               hover:bg-slate-800
               hover:text-slate-200
@@ -198,15 +196,15 @@ function ChatHeader() {
             "
             title="Close Chat"
           >
-            <XIcon className="w-5 h-5" />
+            <XIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
- 
-        </div>
- 
-      </div>
- 
 
- 
+        </div>
+
+      </div>
+
+
+
       {/* Add keyframe animations to your global CSS */}
       <style>{`
         @keyframes fadeIn {
@@ -248,5 +246,5 @@ function ChatHeader() {
     </>
   );
 }
- 
+
 export default ChatHeader;

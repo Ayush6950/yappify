@@ -8,7 +8,7 @@ const NoChatHistoryPlaceholder = ({ name }) => {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-transparent animate-fade-in">
+    <div className="flex flex-col items-center justify-center h-full text-center p-4 sm:p-6 bg-transparent animate-fade-in">
       {/* Icon container with floating animation */}
       <div className="relative mb-6">
         {/* Icon background */}
@@ -25,7 +25,7 @@ const NoChatHistoryPlaceholder = ({ name }) => {
       </div>
 
       {/* Heading */}
-      <h3 className="text-xl font-semibold text-slate-200 mb-4 animate-slide-up">
+      <h3 className="text-lg sm:text-xl font-semibold text-slate-200 mb-4 animate-slide-up">
         Start your conversation with <span className="font-bold">{name}</span>
       </h3>
 

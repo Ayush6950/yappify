@@ -63,7 +63,7 @@ const VideoCallModal = () => {
                 playsInline
                 muted
                 className="
-                  absolute top-6 right-6 w-36 aspect-[3/4] md:w-56
+                  absolute top-4 sm:top-6 right-4 sm:right-6 w-24 sm:w-36 md:w-56
                   rounded-2xl border-2 border-slate-700 shadow-2xl
                   object-cover bg-slate-900 transition-all duration-300
                   hover:scale-105

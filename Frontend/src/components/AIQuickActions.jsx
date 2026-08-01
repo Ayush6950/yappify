@@ -9,7 +9,7 @@ const ACTIONS = [
 
 function AIQuickActions({ isLoading, onAction, disabledActions = [] }) {
   return (
-    <div className="px-4 py-3 border-b border-slate-800/80">
+    <div className="px-2 sm:px-4 py-2 sm:py-3 border-b border-slate-800/80">
       <p className="text-xs text-slate-500 mb-2">Quick actions</p>
       <div className="flex flex-wrap gap-2">
         {ACTIONS.map(({ id, label, icon: Icon }) => {

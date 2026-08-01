@@ -110,16 +110,15 @@ function ChatContainer() {
                   )}
 
                   {/* Bubble + Action Controls wrapper - keeps the action bar pinned to the bubble */}
-                  <div className="relative inline-block max-w-full">
+                  <div className="relative inline-block max-w-[90%] sm:max-w-md lg:max-w-xl">
                     {/* Message bubble */}
                     <div
                       className={`
-                        chat-bubble relative overflow-hidden group/bubble
-                        transition-all duration-300 ease-out text-left
-                        ${
-                          isOwnMessage
-                            ? "bg-amber-500/20 text-amber-250 border border-amber-500/30 shadow-md"
-                            : "bg-slate-900/80 text-slate-200 border border-slate-800/80 shadow-md"
+                        relative overflow-hidden group/bubble
+                        transition-all duration-300 ease-out text-left px-4 py-2.5
+                        ${isOwnMessage
+                          ? "bg-amber-500/20 text-amber-200 border border-amber-500/30 shadow-md rounded-2xl rounded-tr-sm"
+                          : "bg-slate-900/80 text-slate-200 border border-slate-800/80 shadow-md rounded-2xl rounded-tl-sm"
                         }
                         hover:scale-[1.02] active:scale-95
                       `}
@@ -183,7 +182,6 @@ function ChatContainer() {
                           </div>
                         )}
 
-                        {/* Text content or Edit Input */}
                         {isEditing ? (
                           <div className="flex items-center gap-2 mt-1">
                             <input
@@ -207,7 +205,7 @@ function ChatContainer() {
                           </div>
                         ) : (
                           msg.text && (
-                            <p className="leading-relaxed break-words text-sm">
+                            <p className="leading-relaxed break-words break-all whitespace-pre-wrap text-sm">
                               {msg.text}
                             </p>
                           )
@@ -326,17 +324,16 @@ function ChatContainer() {
                             onClick={() =>
                               setOpenReactionMsgId(openReactionMsgId === msg._id ? null : msg._id)
                             }
-                            className={`p-1 rounded transition ${
-                              openReactionMsgId === msg._id
+                            className={`p-1 rounded transition ${openReactionMsgId === msg._id
                                 ? "bg-slate-850 text-amber-400"
                                 : "hover:bg-slate-850 text-slate-400 hover:text-amber-400"
-                            }`}
+                              }`}
                             title="React"
                           >
                             <Smile className="w-3.5 h-3.5" />
                           </button>
                           {openReactionMsgId === msg._id && (
-                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-slate-950 border border-slate-800 p-1.5 rounded-full shadow-2xl z-40">
+                            <div className={`absolute bottom-8 ${isOwnMessage ? 'right-0' : 'left-0 sm:left-1/2 sm:-translate-x-1/2'} flex items-center gap-1 bg-slate-950 border border-slate-800 p-1.5 rounded-full shadow-2xl z-40`}>
                               {["👍", "❤️", "😂", "😮", "😢", "🙏"].map((emoji) => (
                                 <button
                                   key={emoji}

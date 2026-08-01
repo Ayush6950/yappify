@@ -54,7 +54,7 @@ function ProfileHeader() {
 
   return (
     <>
-      <div className="relative z-20 p-6 border-b border-slate-800/80 bg-slate-900/10 backdrop-blur-sm animate-fade-in">
+      <div className="relative z-20 p-4 sm:p-6 border-b border-slate-800/80 bg-slate-900/10 backdrop-blur-sm animate-fade-in">
         <div className="relative flex items-center justify-between">
           {/* Left section - Avatar & User info */}
           <div className="flex items-center gap-4">
@@ -68,7 +68,7 @@ function ProfileHeader() {
                   border-2 border-slate-700
                   transition-all duration-300 ease-out
                   hover:scale-105
-                  focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-2 focus:ring-offset-slate-950
+                  focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:ring-offset-2 focus:ring-offset-slate-950
                   active:scale-95
                   ${isUploading ? "opacity-75 cursor-wait" : "cursor-pointer"}
                 `}
@@ -98,12 +98,12 @@ function ProfileHeader() {
                 {/* Loading spinner */}
                 {isUploading && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-amber-200 border-t-white rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-cyan-200 border-t-white rounded-full animate-spin" />
                   </div>
                 )}
 
                 {/* Online status dot */}
-                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-cyan-500 border-2 border-slate-950" />
               </button>
 
               <input
@@ -118,13 +118,13 @@ function ProfileHeader() {
 
             {/* User info section */}
             <div className="flex flex-col justify-center">
-              <h3 className="text-slate-100 font-semibold text-base tracking-tight max-w-[180px] truncate hover:text-amber-400 transition-colors duration-300">
+              <h3 className="text-slate-100 font-semibold text-base tracking-tight max-w-[180px] truncate hover:text-cyan-400 transition-colors duration-300">
                 {authUser.fullName}
               </h3>
 
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                <p className="text-xs font-medium text-emerald-500">Online</p>
+                <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse" />
+                <p className="text-xs font-medium text-cyan-500">Online</p>
               </div>
             </div>
           </div>
@@ -139,9 +139,9 @@ function ProfileHeader() {
               }}
               className={`
                 relative p-2 rounded-lg transition-all duration-300 ease-out
-                focus:outline-none focus:ring-2 focus:ring-amber-500/50
-                group text-slate-400 hover:text-amber-400 hover:bg-slate-800/50
-                ${isMenuOpen ? "text-amber-400 bg-slate-800/50" : ""}
+                focus:outline-none focus:ring-2 focus:ring-cyan-500/50
+                group text-slate-400 hover:text-cyan-400 hover:bg-slate-800/50
+                ${isMenuOpen ? "text-cyan-400 bg-slate-800/50" : ""}
               `}
               title="More options"
             >
@@ -159,16 +159,16 @@ function ProfileHeader() {
                     toggleSound();
                     setIsMenuOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 transition-colors duration-200 text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 group/item"
+                  className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 transition-colors duration-200 text-slate-300 hover:text-cyan-400 hover:bg-cyan-500/10 group/item"
                 >
                   {isSoundEnabled ? (
                     <>
-                      <VolumeOffIcon className="size-4 text-slate-400 group-hover/item:text-amber-400 transition-colors" />
+                      <VolumeOffIcon className="size-4 text-slate-400 group-hover/item:text-cyan-400 transition-colors" />
                       <span>Mute Sounds</span>
                     </>
                   ) : (
                     <>
-                      <Volume2Icon className="size-4 text-slate-400 group-hover/item:text-amber-400 transition-colors" />
+                      <Volume2Icon className="size-4 text-slate-400 group-hover/item:text-cyan-400 transition-colors" />
                       <span>Unmute Sounds</span>
                     </>
                   )}
@@ -182,9 +182,9 @@ function ProfileHeader() {
                     setIsSettingsOpen(true);
                     setIsMenuOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 transition-colors duration-200 text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 group/item"
+                  className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 transition-colors duration-200 text-slate-300 hover:text-cyan-400 hover:bg-cyan-500/10 group/item"
                 >
-                  <Settings className="size-4 text-slate-400 group-hover/item:text-amber-400 transition-colors" />
+                  <Settings className="size-4 text-slate-400 group-hover/item:text-cyan-400 transition-colors" />
                   <span>Notification Settings</span>
                 </button>
 

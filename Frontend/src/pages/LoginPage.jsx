@@ -14,10 +14,10 @@ function LoginPage() {
   };
 
   return (
-    <div className="w-full flex items-center justify-center p-4 bg-slate-900 animate-fade-in">
-      <div className="relative w-full max-w-6xl md:h-[800px] h-[650px]">
+    <div className="w-full h-full flex items-center justify-center p-4 sm:p-8 bg-slate-900 animate-fade-in overflow-y-auto">
+      <div className="relative w-full max-w-6xl h-auto min-h-[600px] lg:h-[800px]">
         <BorderAnimatedContainer>
-          <div className="w-full flex flex-col md:flex-row">
+          <div className="w-full h-full flex flex-col md:flex-row">
             {/* LEFT FORM SECTION */}
             <div className="md:w-1/2 p-8 flex items-center justify-center md:border-r border-slate-600/30 animate-slide-right">
               <div className="w-full max-w-md">
