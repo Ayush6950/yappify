@@ -14,7 +14,7 @@ const CallControls = ({
   endCall,
 }) => {
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/70 backdrop-blur-md px-6 py-3 rounded-full">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-4 bg-black/70 backdrop-blur-md px-4 sm:px-6 py-3 rounded-full w-[95%] sm:w-auto justify-center max-w-sm">
 
       <button
         onClick={toggleMute}

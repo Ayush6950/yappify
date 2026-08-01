@@ -11,7 +11,7 @@ export default function AISearchFooter({ onSearch, isLoading }) {
   };
 
   return (
-    <div className="px-4 py-3 border-t border-slate-800/80 bg-slate-900/40">
+    <div className="px-2 sm:px-4 py-2 sm:py-3 border-t border-slate-800/80 bg-slate-900/40">
       <div
         className="
           flex items-center gap-2

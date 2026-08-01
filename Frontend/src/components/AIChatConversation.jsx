@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, Send, Sparkles, Trash2 } from "lucide-react";
+import { Bot, Send, Sparkles, Trash2, ArrowLeft } from "lucide-react";
 import { useAIStore } from "../store/useAIStore";
+import { useChatStore } from "../store/useChatStore";
 
 const STARTERS = [
   "Explain this simply",
@@ -11,6 +12,7 @@ const STARTERS = [
 
 function AIChatConversation() {
   const { assistantMessages, askAssistant, clearAssistantMessages, isLoading, lastAction } = useAIStore();
+  const { setSelectedUser } = useChatStore();
   const [question, setQuestion] = useState("");
   const endRef = useRef(null);
 
@@ -29,12 +31,15 @@ function AIChatConversation() {
 
   return (
     <section className="flex-1 min-h-0 flex flex-col bg-slate-950/30">
-      <header className="flex items-center justify-between gap-3 px-6 py-4 h-[84px] border-b border-slate-800/80 bg-slate-900/20">
+      <header className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 h-[84px] border-b border-slate-800/80 bg-slate-900/20">
         <div className="flex items-center gap-3">
-          <div className="size-12 rounded-full grid place-items-center bg-violet-500/15 border border-violet-500/30 text-violet-300"><Bot className="w-6 h-6" /></div>
-          <div><h2 className="text-slate-100 font-semibold">AI Assistant</h2><p className="text-xs text-violet-300">Online · Ask anything</p></div>
+          <button onClick={() => setSelectedUser(null)} className="sm:hidden p-2 -ml-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors" title="Back">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="size-10 sm:size-12 rounded-full grid place-items-center bg-violet-500/15 border border-violet-500/30 text-violet-300 shrink-0"><Bot className="w-5 h-5 sm:w-6 sm:h-6" /></div>
+          <div><h2 className="text-slate-100 font-semibold text-sm sm:text-base">AI Assistant</h2><p className="text-xs text-violet-300">Online · Ask anything</p></div>
         </div>
-        {assistantMessages.length > 0 && <button onClick={clearAssistantMessages} className="p-2 rounded-lg text-slate-400 hover:text-red-300 hover:bg-red-500/10" title="Clear AI chat"><Trash2 className="w-4 h-4" /></button>}
+        {assistantMessages.length > 0 && <button onClick={clearAssistantMessages} className="p-2 rounded-lg text-slate-400 hover:text-red-300 hover:bg-red-500/10" title="Clear AI chat"><Trash2 className="w-4 h-4 sm:w-5 sm:h-5" /></button>}
       </header>
 
       <main className="flex-1 overflow-y-auto px-6 py-6 space-y-4">

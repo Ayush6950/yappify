@@ -136,7 +136,7 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="p-6 space-y-6 overflow-y-auto max-h-[500px]">
+        <div className="p-4 sm:p-6 space-y-6 overflow-y-auto max-h-[60vh] sm:max-h-[500px]">
           {/* Global Sound Toggles */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">

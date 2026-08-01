@@ -51,7 +51,7 @@ function AIPanel() {
     !streamingText && !isLoading && !error && !showSuggestions;
 
   return (
-    <div className="w-80 flex flex-col border-l border-slate-800/80 bg-slate-900/40 animate-fade-in">
+    <div className="w-full sm:w-80 absolute inset-0 z-50 sm:relative sm:z-auto sm:inset-auto flex flex-col sm:border-l border-slate-800/80 bg-slate-900/95 sm:bg-slate-900/40 animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-slate-800/80">
         <div className="flex items-center gap-2 min-w-0">

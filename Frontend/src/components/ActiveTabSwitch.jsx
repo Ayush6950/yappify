@@ -9,7 +9,7 @@ function ActiveTabSwitch() {
   ];
 
   return (
-    <div className="relative p-2 m-2">
+    <div className="relative p-1 sm:p-2 m-1 sm:m-2">
       {/* Tab buttons container */}
       <div className="relative flex gap-1 bg-slate-950/60 rounded-lg p-1 border border-slate-800/80">
         {/* Animated active indicator background */}
