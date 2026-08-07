@@ -24,7 +24,7 @@ function ContactList() {
             key={contact._id}
             className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 ${
               selectedUser?._id === contact._id
-                ? "bg-amber-500/10 border border-amber-500/20 shadow-md shadow-amber-500/5"
+                ? "bg-indigo-500/10 border border-indigo-500/20 shadow-md shadow-indigo-500/5"
                 : "bg-transparent hover:bg-slate-900/30 border border-transparent"
             }`}
             onClick={() => setSelectedUser(contact)}
@@ -35,7 +35,7 @@ function ContactList() {
                   <img src={contact.profilePic || "/avatar.png"} alt={contact.fullName} />
                 </div>
               </div>
-              <h4 className={`font-semibold truncate text-sm ${selectedUser?._id === contact._id ? "text-amber-400" : "text-slate-300"}`}>
+              <h4 className={`font-semibold truncate text-sm ${selectedUser?._id === contact._id ? "text-indigo-400" : "text-slate-300"}`}>
                 {contact.fullName}
               </h4>
             </div>

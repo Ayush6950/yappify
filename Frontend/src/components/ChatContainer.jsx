@@ -100,9 +100,9 @@ function ChatContainer() {
                 >
                   {/* Quoted replied message */}
                   {msg.replyTo && (
-                    <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-1 opacity-75 max-w-xs truncate bg-slate-900/60 p-1.5 rounded-lg border-l-2 border-amber-500/60">
-                      <Reply className="w-3 h-3 text-amber-400 flex-shrink-0" />
-                      <span className="font-semibold text-amber-400">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-1 opacity-75 max-w-xs truncate bg-slate-900/60 p-1.5 rounded-lg border-l-2 border-indigo-500/60">
+                      <Reply className="w-3 h-3 text-indigo-400 flex-shrink-0" />
+                      <span className="font-semibold text-indigo-400">
                         {msg.replyTo.senderId === authUser._id ? "You" : selectedUser.fullName}:
                       </span>
                       <span className="truncate text-slate-350">{msg.replyTo.text || "Media"}</span>
@@ -117,8 +117,8 @@ function ChatContainer() {
                         relative overflow-hidden group/bubble
                         transition-all duration-300 ease-out text-left px-4 py-2.5
                         ${isOwnMessage
-                          ? "bg-amber-500/20 text-amber-200 border border-amber-500/30 shadow-md rounded-2xl rounded-tr-sm"
-                          : "bg-slate-900/80 text-slate-200 border border-slate-800/80 shadow-md rounded-2xl rounded-tl-sm"
+                          ? "bg-gradient-to-br from-indigo-500/20 to-violet-500/15 text-indigo-100 border border-indigo-500/25 shadow-md rounded-2xl rounded-tr-sm"
+                          : "bg-[#1e293b] text-slate-200 border border-slate-700/50 shadow-md rounded-2xl rounded-tl-sm"
                         }
                         hover:scale-[1.02] active:scale-95
                       `}
@@ -164,7 +164,7 @@ function ChatContainer() {
                             )}
                             {msg.media.type === "file" && (
                               <div className="flex items-center gap-3 bg-slate-900 border border-slate-800 p-3 rounded-lg max-w-xs">
-                                <FileText className="w-8 h-8 text-amber-400" />
+                                <FileText className="w-8 h-8 text-indigo-400" />
                                 <div className="text-left flex-1 min-w-0">
                                   <p className="text-sm text-slate-200 font-medium truncate">{msg.media.name}</p>
                                   <p className="text-xs text-slate-450">{(msg.media.size / 1024).toFixed(1)} KB</p>
@@ -172,7 +172,7 @@ function ChatContainer() {
                                 <a
                                   href={msg.media.url}
                                   download={msg.media.name}
-                                  className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-amber-400 transition"
+                                  className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-indigo-400 hover:text-indigo-300 transition"
                                   title="Download file"
                                 >
                                   <Download className="w-4 h-4" />
@@ -188,11 +188,11 @@ function ChatContainer() {
                               type="text"
                               value={editingText}
                               onChange={(e) => setEditingText(e.target.value)}
-                              className="bg-slate-950 border border-slate-800 text-slate-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-amber-500"
+                              className="bg-slate-950 border border-slate-800 text-slate-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-indigo-500"
                             />
                             <button
                               onClick={() => handleSaveEdit(msg._id)}
-                              className="text-xs bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 px-2 py-1 rounded text-amber-400 font-medium"
+                              className="text-xs bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30 px-2 py-1 rounded text-indigo-400 font-medium"
                             >
                               Save
                             </button>
@@ -231,7 +231,7 @@ function ChatContainer() {
                             >
                               {msg.status === "sent" && <span className="text-slate-500">✓</span>}
                               {msg.status === "delivered" && <span className="text-slate-500">✓✓</span>}
-                              {msg.status === "read" && <span className="text-amber-400 font-bold">✓✓</span>}
+                              {msg.status === "read" && <span className="text-indigo-400 font-bold">✓✓</span>}
                             </span>
                           )}
                         </p>
@@ -270,7 +270,7 @@ function ChatContainer() {
                       >
                         <button
                           onClick={() => setReplyingTo(msg)}
-                          className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-amber-400 transition"
+                          className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-indigo-400 transition"
                           title="Reply"
                         >
                           <Reply className="w-3.5 h-3.5" />
@@ -300,7 +300,7 @@ function ChatContainer() {
                           <>
                             <button
                               onClick={() => handleStartEdit(msg)}
-                              className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-amber-400 transition"
+                              className="p-1 hover:bg-slate-850 rounded text-slate-400 hover:text-indigo-400 transition"
                               title="Edit"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
@@ -325,15 +325,15 @@ function ChatContainer() {
                               setOpenReactionMsgId(openReactionMsgId === msg._id ? null : msg._id)
                             }
                             className={`p-1 rounded transition ${openReactionMsgId === msg._id
-                                ? "bg-slate-850 text-amber-400"
-                                : "hover:bg-slate-850 text-slate-400 hover:text-amber-400"
+                                ? "bg-slate-850 text-indigo-400"
+                                : "hover:bg-slate-850 text-slate-400 hover:text-indigo-400"
                               }`}
                             title="React"
                           >
                             <Smile className="w-3.5 h-3.5" />
                           </button>
                           {openReactionMsgId === msg._id && (
-                            <div className={`absolute bottom-8 ${isOwnMessage ? 'right-0' : 'left-0 sm:left-1/2 sm:-translate-x-1/2'} flex items-center gap-1 bg-slate-950 border border-slate-800 p-1.5 rounded-full shadow-2xl z-40`}>
+                            <div className={`absolute bottom-8 ${isOwnMessage ? 'right-0' : 'left-0 sm:left-1/2 sm:-translate-x-1/2'} flex items-center gap-1 bg-slate-950 border border-slate-700/50 p-1.5 rounded-full shadow-2xl z-40`}>
                               {["👍", "❤️", "😂", "😮", "😢", "🙏"].map((emoji) => (
                                 <button
                                   key={emoji}
@@ -359,7 +359,7 @@ function ChatContainer() {
             {/* Typing indicator bubble */}
             {typingUsers[selectedUser._id] && (
               <div className="chat chat-start animate-fade-in-up">
-                <div className="chat-bubble bg-slate-900/80 text-slate-400 border border-slate-800/50 py-2.5 px-4 rounded-lg flex items-center gap-1.5">
+                <div className="chat-bubble bg-[#1e293b] text-slate-400 border border-slate-700/40 py-2.5 px-4 rounded-lg flex items-center gap-1.5">
                   <span className="text-xs font-medium">{selectedUser.fullName} is typing</span>
                   <div className="flex gap-0.5 items-center mt-1">
                     <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
@@ -385,46 +385,6 @@ function ChatContainer() {
       </div>
 
       <MessageInput />
-
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        .animate-fade-in-up {
-          animation: fadeInUp 0.4s ease-out forwards;
-          opacity: 0;
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .animate-fade-in-up,
-          .animate-fade-in {
-            animation: none;
-            opacity: 1;
-            transform: none;
-          }
-        }
-      `}</style>
     </>
   );
 }

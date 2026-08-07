@@ -11,14 +11,14 @@ export default function AISearchFooter({ onSearch, isLoading }) {
   };
 
   return (
-    <div className="px-2 sm:px-4 py-2 sm:py-3 border-t border-slate-800/80 bg-slate-900/40">
+    <div className="px-2 sm:px-4 py-2 sm:py-3 border-t border-slate-700/40 bg-slate-900/30">
       <div
         className="
           flex items-center gap-2
           w-full
           rounded-xl
-          border border-slate-800
-          bg-slate-950/40
+          border border-slate-700/50
+          bg-[#1e293b]/50
           px-3 py-2
           focus-within:border-violet-500/50
           transition-colors

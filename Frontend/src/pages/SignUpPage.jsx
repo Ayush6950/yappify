@@ -60,7 +60,7 @@ function SignUpPage() {
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-4 sm:p-8 bg-slate-900 animate-fade-in overflow-y-auto">
+    <div className="w-full h-full flex items-center justify-center p-4 sm:p-8 bg-[#0a0e1a] animate-fade-in overflow-y-auto">
       <div className="relative w-full max-w-6xl h-auto min-h-[600px] lg:h-[800px]">
         <BorderAnimatedContainer>
           <div className="w-full h-full flex flex-col md:flex-row">
@@ -69,8 +69,8 @@ function SignUpPage() {
               <div className="w-full max-w-md">
                 {/* HEADING */}
                 <div className="text-center mb-8 animate-slide-down">
-                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
-                    <MessageCircleIcon className="w-7 h-7 text-cyan-400" />
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-br from-indigo-500/20 to-violet-500/20 flex items-center justify-center">
+                    <MessageCircleIcon className="w-7 h-7 text-indigo-400" />
                   </div>
 
                   <h2 className="text-2xl font-semibold text-slate-200 mb-2">
@@ -78,7 +78,7 @@ function SignUpPage() {
                   </h2>
                   <h2 className="
                     text-4xl font-black
-                    bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400
+                    bg-gradient-to-r from-indigo-400 via-violet-500 to-indigo-400
                     bg-clip-text text-transparent
                     animate-gradient-shift
                     mb-3
@@ -95,7 +95,7 @@ function SignUpPage() {
                     <label className="
                       block text-sm font-medium text-slate-300 mb-2
                       transition-colors duration-200
-                      group-focus-within:text-cyan-400
+                      group-focus-within:text-indigo-400
                     ">
                       Full Name
                     </label>
@@ -103,7 +103,7 @@ function SignUpPage() {
                       <UserIcon className="
                         absolute left-3 top-3 w-5 h-5
                         text-slate-500 transition-colors duration-200
-                        group-focus-within:text-cyan-400
+                        group-focus-within:text-indigo-400
                       " />
                       <input
                         type="text"
@@ -120,8 +120,8 @@ function SignUpPage() {
                           text-slate-100 placeholder-slate-500
                           transition-all duration-300
                           hover:border-slate-600/50
-                          focus:outline-none focus:border-cyan-500/50 focus:bg-slate-800/80
-                          focus:shadow-lg focus:shadow-cyan-500/20
+                          focus:outline-none focus:border-indigo-500/50 focus:bg-slate-800/80
+                          focus:shadow-lg focus:shadow-indigo-500/20
                           disabled:opacity-60 disabled:cursor-not-allowed
                         "
                       />
@@ -133,7 +133,7 @@ function SignUpPage() {
                     <label className="
                       block text-sm font-medium text-slate-300 mb-2
                       transition-colors duration-200
-                      group-focus-within:text-cyan-400
+                      group-focus-within:text-indigo-400
                     ">
                       Email
                     </label>
@@ -141,7 +141,7 @@ function SignUpPage() {
                       <MailIcon className="
                         absolute left-3 top-3 w-5 h-5
                         text-slate-500 transition-colors duration-200
-                        group-focus-within:text-cyan-400
+                        group-focus-within:text-indigo-400
                       " />
                       <input
                         type="email"
@@ -158,8 +158,8 @@ function SignUpPage() {
                           text-slate-100 placeholder-slate-500
                           transition-all duration-300
                           hover:border-slate-600/50
-                          focus:outline-none focus:border-cyan-500/50 focus:bg-slate-800/80
-                          focus:shadow-lg focus:shadow-cyan-500/20
+                          focus:outline-none focus:border-indigo-500/50 focus:bg-slate-800/80
+                          focus:shadow-lg focus:shadow-indigo-500/20
                           disabled:opacity-60 disabled:cursor-not-allowed
                         "
                       />
@@ -171,7 +171,7 @@ function SignUpPage() {
                     <label className="
                       block text-sm font-medium text-slate-300 mb-2
                       transition-colors duration-200
-                      group-focus-within:text-cyan-400
+                      group-focus-within:text-indigo-400
                     ">
                       Password
                     </label>
@@ -179,7 +179,7 @@ function SignUpPage() {
                       <LockIcon className="
                         absolute left-3 top-3 w-5 h-5
                         text-slate-500 transition-colors duration-200
-                        group-focus-within:text-cyan-400
+                        group-focus-within:text-indigo-400
                       " />
                       <input
                         type="password"
@@ -197,8 +197,8 @@ function SignUpPage() {
                           text-slate-100 placeholder-slate-500
                           transition-all duration-300
                           hover:border-slate-600/50
-                          focus:outline-none focus:border-cyan-500/50 focus:bg-slate-800/80
-                          focus:shadow-lg focus:shadow-cyan-500/20
+                          focus:outline-none focus:border-indigo-500/50 focus:bg-slate-800/80
+                          focus:shadow-lg focus:shadow-indigo-500/20
                           disabled:opacity-60 disabled:cursor-not-allowed
                         "
                       />
@@ -211,19 +211,19 @@ function SignUpPage() {
                     disabled={isSigningUp}
                     className="
                       w-full py-2.5 mt-6 rounded-lg font-semibold
-                      bg-gradient-to-r from-cyan-500 to-blue-600
+                      bg-gradient-to-r from-indigo-500 to-violet-600
                       text-white
                       transition-all duration-300 ease-out
-                      hover:shadow-lg hover:shadow-cyan-500/40 hover:from-cyan-600 hover:to-blue-700
+                      hover:shadow-lg hover:shadow-indigo-500/40 hover:from-indigo-600 hover:to-violet-700
                       active:scale-95
                       disabled:opacity-70 disabled:cursor-not-allowed
-                      focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:ring-offset-2 focus:ring-offset-slate-900
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 focus:ring-offset-slate-900
                       flex items-center justify-center gap-2
                     "
                   >
                     {isSigningUp ? (
                       <>
-                        <LoaderIcon className="w-5 h-5 animate-spin" />
+                        <LoaderIcon className="w-5 h-5 animate-spin-fast" />
                         <span>Creating Account...</span>
                       </>
                     ) : (
@@ -239,10 +239,10 @@ function SignUpPage() {
                     <Link
                       to="/login"
                       className="
-                        text-cyan-400 font-medium
+                        text-indigo-400 font-medium
                         transition-all duration-200
-                        hover:text-cyan-300 hover:underline
-                        focus:outline-none focus:ring-2 focus:ring-cyan-500/50 rounded px-1
+                        hover:text-indigo-300 hover:underline
+                        focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded px-1
                       "
                     >
                       Login
@@ -256,7 +256,7 @@ function SignUpPage() {
             <div className="hidden md:w-1/2 md:flex items-center justify-center p-6 bg-gradient-to-bl from-slate-800/20 to-transparent animate-slide-left">
               <div className="text-center animate-slide-up animation-delay-300">
                 <div className="relative inline-block">
-                  <div className="absolute -inset-8 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-full blur-2xl" />
+                  <div className="absolute -inset-8 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 rounded-full blur-2xl" />
                   
                   <img
                     src="/signup.png"
@@ -272,20 +272,20 @@ function SignUpPage() {
                 <div className="mt-8">
                   <h3 className="
                     text-xl font-semibold
-                    bg-gradient-to-r from-cyan-400 to-blue-400
+                    bg-gradient-to-r from-indigo-400 to-violet-400
                     bg-clip-text text-transparent
                   ">
                     Start Your Journey Today
                   </h3>
 
                   <div className="mt-6 flex flex-wrap justify-center gap-3">
-                    <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 rounded-full border border-cyan-500/30">
+                    <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-indigo-500/20 to-violet-500/20 text-indigo-300 rounded-full border border-indigo-500/30">
                       Free
                     </span>
-                    <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 rounded-full border border-cyan-500/30">
+                    <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-indigo-500/20 to-violet-500/20 text-indigo-300 rounded-full border border-indigo-500/30">
                       Easy Setup
                     </span>
-                    <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 rounded-full border border-cyan-500/30">
+                    <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-indigo-500/20 to-violet-500/20 text-indigo-300 rounded-full border border-indigo-500/30">
                       Private
                     </span>
                   </div>
@@ -295,83 +295,6 @@ function SignUpPage() {
           </div>
         </BorderAnimatedContainer>
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(12px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-12px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slideRight {
-          from {
-            opacity: 0;
-            transform: translateX(-16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes slideLeft {
-          from {
-            opacity: 0;
-            transform: translateX(16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes gradientShift {
-          0% { background-position: 0% center; }
-          50% { background-position: 100% center; }
-          100% { background-position: 0% center; }
-        }
-
-        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; opacity: 0; }
-        .animate-slide-down { animation: slideDown 0.5s ease-out forwards; opacity: 0; }
-        .animate-slide-right { animation: slideRight 0.5s ease-out forwards; opacity: 0; }
-        .animate-slide-left { animation: slideLeft 0.5s ease-out forwards; opacity: 0; }
-        .animate-gradient-shift { background-size: 200% center; animation: gradientShift 3s ease infinite; }
-
-        .animation-delay-100 { animation-delay: 100ms; }
-        .animation-delay-200 { animation-delay: 200ms; }
-        .animation-delay-300 { animation-delay: 300ms; }
-
-        @media (prefers-reduced-motion: reduce) {
-          .animate-fade-in, .animate-slide-up, .animate-slide-down,
-          .animate-slide-right, .animate-slide-left, .animate-gradient-shift {
-            animation: none;
-            opacity: 1;
-            transform: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }

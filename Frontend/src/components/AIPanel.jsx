@@ -51,9 +51,9 @@ function AIPanel() {
     !streamingText && !isLoading && !error && !showSuggestions;
 
   return (
-    <div className="w-full sm:w-80 absolute inset-0 z-50 sm:relative sm:z-auto sm:inset-auto flex flex-col sm:border-l border-slate-800/80 bg-slate-900/95 sm:bg-slate-900/40 animate-fade-in">
+    <div className="w-full sm:w-80 absolute inset-0 z-50 sm:relative sm:z-auto sm:inset-auto flex flex-col sm:border-l border-slate-700/40 bg-slate-900/95 sm:bg-[#111827]/40 animate-fade-in-right">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-4 border-b border-slate-800/80">
+      <div className="flex items-center justify-between px-4 py-4 border-b border-slate-700/40">
         <div className="flex items-center gap-2 min-w-0">
           <div className="p-1.5 rounded-lg bg-violet-500/10 text-violet-400">
             <Sparkles className="w-4 h-4" />
@@ -69,7 +69,7 @@ function AIPanel() {
         </div>
         <button
           onClick={closePanel}
-          className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors"
+          className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors"
           title="Close AI panel"
         >
           <X className="w-4 h-4" />
@@ -82,13 +82,13 @@ function AIPanel() {
       />
 
       {/* Language picker for translate */}
-      <div className="px-4 py-2 border-b border-slate-800/80">
+      <div className="px-4 py-2 border-b border-slate-700/40">
         <label className="text-xs text-slate-500 mb-1 block">Translate to</label>
         <select
           value={targetLanguage}
           onChange={(e) => setTargetLanguage(e.target.value)}
           className="
-            w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5
+            w-full bg-[#1e293b]/70 border border-slate-700/50 rounded-lg px-2 py-1.5
             text-xs text-slate-300 focus:outline-none focus:border-violet-500/50
           "
         >
@@ -102,7 +102,7 @@ function AIPanel() {
 
       {/* Selected message context */}
       {selectedMessage && (
-        <div className="px-4 py-2 border-b border-slate-800/80 bg-slate-950/30">
+        <div className="px-4 py-2 border-b border-slate-700/40 bg-slate-950/20">
           <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">
             Selected message
           </p>
@@ -120,17 +120,17 @@ function AIPanel() {
             {assistantMessages.map((message, index) => (
               <div key={index} className={`rounded-lg p-2.5 text-sm whitespace-pre-wrap ${message.role === "user" ? "bg-slate-800 text-slate-300 ml-5" : "bg-violet-500/10 border border-violet-500/20 text-slate-200 mr-2"}`}>{message.content}</div>
             ))}
-            {isLoading && lastAction === "assistant-chat" && <Loader2 className="w-4 h-4 text-violet-400 animate-spin" />}
+            {isLoading && lastAction === "assistant-chat" && <Loader2 className="w-4 h-4 text-violet-400 animate-spin-fast" />}
           </div>
         )}
 
-                {showEmpty && (
+        {showEmpty && (
           <div className="text-center py-8">
             <Sparkles className="w-8 h-8 text-slate-700 mx-auto mb-3" />
             <p className="text-sm text-slate-500">
               Ask AI to help with this conversation
             </p>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-xs text-slate-650 mt-1">
               Summarize, suggest replies, translate, or explain code
             </p>
           </div>
@@ -138,7 +138,7 @@ function AIPanel() {
 
         {isLoading && !streamingText && !showSuggestions && (
           <div className="flex items-center gap-2 text-slate-400">
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin-fast" />
             <span className="text-sm">
               {LOADING_LABELS[lastAction] || "Thinking..."}
             </span>
@@ -161,15 +161,15 @@ function AIPanel() {
         {showStreaming && (
           <div className="space-y-2">
             {originalText && (lastAction === "translate" || lastAction === "explain-code") && (
-              <div className="p-2 rounded-lg bg-slate-950/50 border border-slate-800/60">
-                <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">
+              <div className="p-2 rounded-lg bg-slate-950/40 border border-slate-700/40">
+                <p className="text-[10px] text-slate-650 uppercase tracking-wider mb-1">
                   Original
                 </p>
                 <p className="text-xs text-slate-500 line-clamp-3">{originalText}</p>
               </div>
             )}
             {messageCount > 0 && lastAction === "summarize" && (
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-slate-650">
                 Based on {messageCount} recent message{messageCount !== 1 ? "s" : ""}
               </p>
             )}
@@ -184,14 +184,14 @@ function AIPanel() {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-slate-800/80 space-y-2">
+      <div className="px-4 py-3 border-t border-slate-700/40 space-y-2">
         {isLoading && (
           <button
             onClick={cancelStream}
             className="
               w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg
               text-xs font-medium text-slate-400
-              bg-slate-800/50 hover:bg-slate-800 transition-colors
+              bg-slate-800/50 hover:bg-slate-800/80 transition-colors
             "
           >
             <Square className="w-3 h-3" />
@@ -199,21 +199,7 @@ function AIPanel() {
           </button>
         )}
        <AISearchFooter onSearch={askAssistant} isLoading={isLoading} />
-
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateX(8px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.25s ease-out forwards;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-fade-in { animation: none; opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }

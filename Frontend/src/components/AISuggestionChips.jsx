@@ -20,8 +20,8 @@ function AISuggestionChips({ suggestions, onUseAsReply }) {
         <div
           key={index}
           className="
-            group p-3 rounded-lg border border-slate-800/80 bg-slate-900/40
-            hover:border-violet-500/30 hover:bg-slate-900/60 transition-colors
+            group p-3 rounded-lg border border-slate-700/40 bg-slate-900/30
+            hover:border-violet-500/30 hover:bg-slate-900/50 transition-colors
           "
         >
           <p className="text-sm text-slate-300 leading-relaxed mb-2">
@@ -43,7 +43,7 @@ function AISuggestionChips({ suggestions, onUseAsReply }) {
               onClick={() => handleCopy(suggestion)}
               className="
                 flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium
-                bg-slate-800/50 text-slate-400 border border-slate-700/50
+                bg-slate-800/30 text-slate-400 border border-slate-700/40
                 hover:bg-slate-800 hover:text-slate-300 transition-colors
               "
               title="Copy to clipboard"

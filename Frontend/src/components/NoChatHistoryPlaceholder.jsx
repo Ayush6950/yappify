@@ -14,13 +14,13 @@ const NoChatHistoryPlaceholder = ({ name }) => {
         {/* Icon background */}
         <div className="
           relative w-16 h-16 
-          bg-amber-500/10
+          bg-indigo-500/10
           rounded-full flex items-center justify-center
-          border-2 border-amber-500/20
+          border-2 border-indigo-500/20
           shadow-sm
           animate-float
         ">
-          <MessageCircleIcon className="size-8 text-amber-400" />
+          <MessageCircleIcon className="size-8 text-indigo-400" />
         </div>
       </div>
 
@@ -38,7 +38,7 @@ const NoChatHistoryPlaceholder = ({ name }) => {
         {/* Animated divider line */}
         <div className="flex items-center justify-center gap-3">
           <div className="h-px flex-1 bg-slate-800" />
-          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
           <div className="h-px flex-1 bg-slate-800" />
         </div>
       </div>
@@ -51,9 +51,9 @@ const NoChatHistoryPlaceholder = ({ name }) => {
             className={`
               relative px-4 py-2 text-xs font-medium
               rounded-full transition-all duration-300 ease-out
-              focus:outline-none focus:ring-2 focus:ring-amber-500/50
-              overflow-hidden bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20
-              text-amber-400
+              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
+              overflow-hidden bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20
+              text-indigo-400
             `}
             style={{
               animation: `slideUp 0.5s ease-out ${500 + suggestion.delay}ms both`,
@@ -72,93 +72,8 @@ const NoChatHistoryPlaceholder = ({ name }) => {
       </div>
 
       {/* Optional: floating accent elements */}
-      <div className="absolute top-20 left-10 w-2 h-2 bg-cyan-500/20 rounded-full animate-float animation-delay-500" />
-      <div className="absolute bottom-32 right-12 w-1.5 h-1.5 bg-blue-500/20 rounded-full animate-float animation-delay-700" />
-
-      {/* Keyframe animations */}
-      <style>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-8px);
-          }
-        }
-
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-        }
-
-        .animate-fade-in {
-          animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        .animate-slide-up {
-          animation: slideUp 0.5s ease-out forwards;
-          opacity: 0;
-        }
-
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-
-        .animate-pulse {
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        .animation-delay-150 {
-          animation-delay: 150ms;
-        }
-
-        .animation-delay-300 {
-          animation-delay: 300ms;
-        }
-
-        .animation-delay-500 {
-          animation-delay: 500ms;
-        }
-
-        .animation-delay-700 {
-          animation-delay: 700ms;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .animate-fade-in,
-          .animate-slide-up,
-          .animate-float,
-          .animate-pulse {
-            animation: none;
-            opacity: 1;
-            transform: none;
-          }
-        }
-      `}</style>
+      <div className="absolute top-20 left-10 w-2 h-2 bg-indigo-500/20 rounded-full animate-float animation-delay-500" />
+      <div className="absolute bottom-32 right-12 w-1.5 h-1.5 bg-violet-500/20 rounded-full animate-float animation-delay-700" />
     </div>
   );
 };

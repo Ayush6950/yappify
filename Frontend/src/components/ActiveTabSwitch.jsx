@@ -14,7 +14,7 @@ function ActiveTabSwitch() {
       <div className="relative flex gap-1 bg-slate-950/60 rounded-lg p-1 border border-slate-800/80">
         {/* Animated active indicator background */}
         <div
-          className="absolute top-1 bottom-1 rounded-md bg-slate-800/80 shadow-md transition-all duration-300 ease-out"
+          className="absolute top-1 bottom-1 rounded-md bg-indigo-500/10 border border-indigo-500/20 shadow-md transition-all duration-300 ease-out"
           style={{
             left: activeTab === "chats" ? "0.25rem" : "calc(50% + 0.25rem)",
             width: "calc(50% - 0.5rem)",
@@ -31,11 +31,11 @@ function ActiveTabSwitch() {
               transition-all duration-200 ease-out
               ${
                 activeTab === tab.id
-                  ? "text-amber-400"
+                  ? "text-indigo-400"
                   : "text-slate-400 hover:text-slate-300"
               }
               active:scale-95
-              focus:outline-none focus:ring-2 focus:ring-amber-500/50
+              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
             `}
           >
             {/* Text */}

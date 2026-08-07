@@ -119,11 +119,11 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-[9999] animate-fade-in p-4">
-      <div className="bg-slate-800 border border-slate-700/80 rounded-2xl shadow-2xl w-full max-w-md transform scale-100 transition-all duration-300 overflow-hidden flex flex-col">
+      <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl shadow-2xl w-full max-w-md transform scale-100 transition-all duration-300 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-slate-800/80">
+        <div className="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-[#1e293b]/80">
           <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-cyan-400 animate-pulse" />
+            <Bell className="w-5 h-5 text-indigo-400 animate-pulse" />
             <h2 className="text-lg font-semibold text-slate-100 tracking-tight">Notification Settings</h2>
           </div>
           <button
@@ -142,7 +142,7 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
-                  {isSoundEnabled ? <Volume2 className="w-4 h-4 text-cyan-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
+                  {isSoundEnabled ? <Volume2 className="w-4 h-4 text-indigo-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
                   <label className="text-sm font-medium text-slate-200">Message Sounds</label>
                 </div>
                 <p className="text-xs text-slate-400">Play alert sound for incoming messages.</p>
@@ -151,14 +151,14 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
                 type="checkbox"
                 checked={isSoundEnabled}
                 onChange={(e) => setNotificationSetting("isSoundEnabled", e.target.checked)}
-                className="checkbox checkbox-primary size-5 rounded-md accent-cyan-500 cursor-pointer"
+                className="checkbox checkbox-primary size-5 rounded-md accent-indigo-500 cursor-pointer"
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
-                  <Keyboard className="w-4 h-4 text-cyan-400" />
+                  <Keyboard className="w-4 h-4 text-indigo-400" />
                   <label className="text-sm font-medium text-slate-200">Typing Sounds</label>
                 </div>
                 <p className="text-xs text-slate-400">Play mechanical typewriter sounds while typing.</p>
@@ -167,14 +167,14 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
                 type="checkbox"
                 checked={isKeystrokeSoundEnabled}
                 onChange={(e) => setNotificationSetting("isKeystrokeSoundEnabled", e.target.checked)}
-                className="checkbox checkbox-primary size-5 rounded-md accent-cyan-500 cursor-pointer"
+                className="checkbox checkbox-primary size-5 rounded-md accent-indigo-500 cursor-pointer"
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
-                  <Monitor className="w-4 h-4 text-cyan-400" />
+                  <Monitor className="w-4 h-4 text-indigo-400" />
                   <label className="text-sm font-medium text-slate-200">Desktop Notifications</label>
                 </div>
                 <p className="text-xs text-slate-400">
@@ -188,7 +188,7 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
                 type="checkbox"
                 checked={isDesktopNotificationsEnabled}
                 onChange={handleDesktopToggle}
-                className="checkbox checkbox-primary size-5 rounded-md accent-cyan-500 cursor-pointer"
+                className="checkbox checkbox-primary size-5 rounded-md accent-indigo-500 cursor-pointer"
               />
             </div>
           </div>
@@ -199,7 +199,7 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <label className="text-sm font-medium text-slate-200">Alert Volume</label>
-              <span className="text-xs font-semibold text-cyan-400">{Math.round(notificationVolume * 100)}%</span>
+              <span className="text-xs font-semibold text-indigo-400">{Math.round(notificationVolume * 100)}%</span>
             </div>
             <input
               type="range"
@@ -209,7 +209,7 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
               value={notificationVolume}
               onChange={(e) => setNotificationSetting("notificationVolume", parseFloat(e.target.value))}
               disabled={!isSoundEnabled && !isKeystrokeSoundEnabled}
-              className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-400 disabled:opacity-40 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -223,7 +223,7 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
                 value={notificationSoundType}
                 onChange={(e) => setNotificationSetting("notificationSoundType", e.target.value)}
                 disabled={!isSoundEnabled}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <option value="default">Default (Classic MP3)</option>
                 <option value="chime">Synth Chime</option>
@@ -235,10 +235,10 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
                 type="button"
                 onClick={playPreview}
                 disabled={!isSoundEnabled}
-                className="px-3.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/20 active:scale-95 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-3.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 active:scale-95 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
                 title="Preview selected sound"
               >
-                <Play className="w-4 h-4 fill-cyan-400/20" />
+                <Play className="w-4 h-4 fill-indigo-400/20" />
                 <span>Preview</span>
               </button>
             </div>
@@ -246,10 +246,10 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-700/50 bg-slate-900/20 flex justify-end">
+        <div className="px-6 py-4 border-t border-slate-700/50 bg-[#111827]/30 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-cyan-500 text-white hover:bg-cyan-600 rounded-lg text-sm font-medium transition-all active:scale-95 shadow-lg shadow-cyan-500/20"
+            className="px-5 py-2 bg-gradient-to-r from-indigo-500 to-violet-500 text-white hover:from-indigo-600 hover:to-violet-600 rounded-lg text-sm font-medium transition-all active:scale-95 shadow-lg shadow-indigo-500/20"
           >
             Done
           </button>
