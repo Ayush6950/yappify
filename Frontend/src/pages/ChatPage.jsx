@@ -23,9 +23,9 @@ function ChatPage() {
 
   return (
     <div className={`w-full h-full sm:h-[800px] ${isPanelOpen ? "max-w-7xl" : "max-w-6xl"}`}>
-      <div className="w-full h-full flex sm:rounded-2xl border-0 sm:border border-slate-800/80 bg-slate-950/80 shadow-2xl backdrop-blur-md overflow-hidden relative">
+      <div className="w-full h-full flex sm:rounded-2xl border-0 sm:border border-slate-700/40 bg-[#111827]/85 shadow-2xl backdrop-blur-xl overflow-hidden relative">
         {/* LEFT SIDEBAR */}
-        <div className={`w-full sm:w-96 flex flex-col sm:border-r border-slate-800/80 bg-slate-900/20 shrink-0 ${selectedUser ? "hidden sm:flex" : "flex"}`}>
+        <div className={`w-full sm:w-96 flex flex-col sm:border-r border-slate-700/40 bg-slate-950/10 shrink-0 ${selectedUser ? "hidden sm:flex" : "flex"}`}>
           <ProfileHeader />
           <ActiveTabSwitch />
 
@@ -36,21 +36,13 @@ function ChatPage() {
         </div>
 
         {/* CENTER CHAT AREA */}
-        <div className={`flex-1 flex flex-col bg-slate-950/30 min-w-0 ${!selectedUser ? "hidden sm:flex" : "flex"}`}>
+        <div className={`flex-1 flex flex-col bg-slate-950/20 min-w-0 ${!selectedUser ? "hidden sm:flex" : "flex"}`}>
           {selectedUser?.isAIProfile ? <AIChatConversation /> : selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
 
         {/* AI PANEL */}
         {isPanelOpen && selectedUser && !selectedUser.isAIProfile && <AIPanel />}
       </div>
-
-      <style>{`
-        @media (prefers-reduced-motion: reduce) {
-          * {
-            animation: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

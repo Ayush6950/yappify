@@ -31,9 +31,9 @@ function AIChatConversation() {
 
   return (
     <section className="flex-1 min-h-0 flex flex-col bg-slate-950/30">
-      <header className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 h-[84px] border-b border-slate-800/80 bg-slate-900/20">
+      <header className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 h-[84px] border-b border-slate-700/40 bg-slate-900/10">
         <div className="flex items-center gap-3">
-          <button onClick={() => setSelectedUser(null)} className="sm:hidden p-2 -ml-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors" title="Back">
+          <button onClick={() => setSelectedUser(null)} className="sm:hidden p-2 -ml-2 rounded-lg text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 transition-colors" title="Back">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="size-10 sm:size-12 rounded-full grid place-items-center bg-violet-500/15 border border-violet-500/30 text-violet-300 shrink-0"><Bot className="w-5 h-5 sm:w-6 sm:h-6" /></div>
@@ -54,7 +54,7 @@ function AIChatConversation() {
           </div>
         )}
         {assistantMessages.map((message, index) => (
-          <div key={index} className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap animate-message-in ${message.role === "user" ? "ml-auto bg-amber-500/20 border border-amber-500/25 text-amber-100 rounded-br-md" : "bg-slate-900 border border-slate-800 text-slate-200 rounded-bl-md"}`}>
+          <div key={index} className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap animate-message-in ${message.role === "user" ? "ml-auto bg-gradient-to-br from-indigo-500/20 to-violet-500/15 border border-indigo-500/25 text-indigo-100 rounded-br-md" : "bg-[#1e293b] border border-slate-700/50 text-slate-200 rounded-bl-md"}`}>
             {message.role === "assistant" && <p className="text-[10px] uppercase tracking-wider text-violet-300 mb-1">AI Assistant</p>}{message.content}
           </div>
         ))}
@@ -62,11 +62,10 @@ function AIChatConversation() {
         <div ref={endRef} />
       </main>
 
-      <form onSubmit={send} className="flex gap-3 p-4 border-t border-slate-800/80 bg-slate-950/40">
-        <input autoFocus value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask AI anything..." className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 transition" />
+      <form onSubmit={send} className="flex gap-3 p-4 border-t border-slate-700/40 bg-slate-950/40">
+        <input autoFocus value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Ask AI anything..." className="flex-1 bg-[#1e293b]/70 border border-slate-700/50 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/10 transition" />
         <button type="submit" disabled={!question.trim() || isLoading} className="p-3 rounded-xl bg-violet-500/20 text-violet-300 border border-violet-500/30 hover:bg-violet-500/30 active:scale-95 transition disabled:opacity-40" aria-label="Send message to AI"><Send className="w-5 h-5" /></button>
       </form>
-      <style>{`@keyframes messageIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } } .animate-message-in { animation: messageIn .2s ease-out; }`}</style>
     </section>
   );
 }

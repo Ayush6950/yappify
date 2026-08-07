@@ -45,7 +45,7 @@ function ChatHeader() {
       <div
         className="
           relative flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 flex-none h-16 sm:h-[84px]
-          bg-slate-900/20 border-b border-slate-800/80 animate-fade-in
+          bg-[#111827]/10 border-b border-slate-700/40 animate-fade-in
         "
       >
         {/* Left section - User info */}
@@ -72,7 +72,7 @@ function ChatHeader() {
                   absolute bottom-0 right-0 w-3 h-3 rounded-full
                   border-2 border-slate-950 transition-all duration-300
                   ${isOnline
-                    ? "bg-green-500"
+                    ? "bg-emerald-500"
                     : "bg-slate-700"
                   }
                 `}
@@ -126,7 +126,7 @@ function ChatHeader() {
               p-1.5 sm:p-2 rounded-xl transition-all duration-200 active:scale-95
               ${isPanelOpen
                 ? "text-violet-400 bg-violet-500/10"
-                : "text-slate-400 hover:bg-slate-800 hover:text-violet-300"
+                : "text-slate-400 hover:bg-slate-800/60 hover:text-violet-350"
               }
             `}
             title="AI Assistant"
@@ -141,7 +141,7 @@ function ChatHeader() {
               p-1.5 sm:p-2 rounded-xl transition-all duration-200 active:scale-95
               ${mutedUsers.includes(selectedUser._id)
                 ? "text-red-400 hover:bg-red-500/10"
-                : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
               }
             `}
             title={mutedUsers.includes(selectedUser._id) ? "Unmute Notifications" : "Mute Notifications"}
@@ -158,8 +158,8 @@ function ChatHeader() {
             onClick={handleVoiceCall}
             className="
               p-1.5 sm:p-2 rounded-xl
-              text-amber-400
-              hover:bg-amber-500/10
+              text-indigo-400
+              hover:bg-indigo-500/10
               transition-all duration-200
               active:scale-95
             "
@@ -173,8 +173,8 @@ function ChatHeader() {
             onClick={handleVideoCall}
             className="
               p-1.5 sm:p-2 rounded-xl
-              text-amber-400
-              hover:bg-amber-500/10
+              text-indigo-400
+              hover:bg-indigo-500/10
               transition-all duration-200
               active:scale-95
             "
@@ -189,7 +189,7 @@ function ChatHeader() {
             className="
               p-1.5 sm:p-2 rounded-xl
               text-slate-400
-              hover:bg-slate-800
+              hover:bg-slate-800/60
               hover:text-slate-200
               transition-all duration-200
               active:scale-95
@@ -202,47 +202,6 @@ function ChatHeader() {
         </div>
 
       </div>
-
-
-
-      {/* Add keyframe animations to your global CSS */}
-      <style>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
- 
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-        }
- 
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-out forwards;
-        }
- 
-        .animate-pulse {
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
- 
-        @media (prefers-reduced-motion: reduce) {
-          .animate-fade-in,
-          .animate-pulse {
-            animation: none;
-            opacity: 1;
-          }
-        }
-      `}</style>
     </>
   );
 }
