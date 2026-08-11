@@ -38,10 +38,10 @@ const VideoCallModal = () => {
   const isVideo = callType === "video";
 
   return (
-    <div className="fixed inset-0 bg-slate-950 flex flex-col justify-center items-center z-[9990] animate-fade-in text-white overflow-hidden">
+    <div className="fixed inset-0 bg-[#0a0e1a] flex flex-col justify-center items-center z-[9990] animate-fade-in text-white overflow-hidden">
       {/* Dynamic Background Gradients */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.95)_0%,rgba(2,6,23,1)_100%)] z-0" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 blur-[120px] rounded-full z-0 pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full z-0 pointer-events-none" />
 
       {/* Main Container */}
       <div className="relative w-full h-full flex items-center justify-center z-10">
@@ -64,7 +64,7 @@ const VideoCallModal = () => {
                 muted
                 className="
                   absolute top-4 sm:top-6 right-4 sm:right-6 w-24 sm:w-36 md:w-56
-                  rounded-2xl border-2 border-slate-700 shadow-2xl
+                  rounded-2xl border-2 border-indigo-500/30 shadow-2xl
                   object-cover bg-slate-900 transition-all duration-300
                   hover:scale-105
                 "
@@ -76,9 +76,9 @@ const VideoCallModal = () => {
           <div className="flex flex-col items-center max-w-md px-6 text-center">
             {/* Pulsing profile pic */}
             <div className="relative mb-8">
-              <div className="absolute inset-0 rounded-full bg-cyan-500 animate-pulse opacity-15 blur-xl scale-150" />
+              <div className="absolute inset-0 rounded-full bg-indigo-500 animate-pulse opacity-15 blur-xl scale-150" />
               {!callAccepted && (
-                <div className="absolute inset-0 rounded-full border border-cyan-500/30 animate-ping opacity-60" />
+                <div className="absolute inset-0 rounded-full border border-indigo-500/30 animate-ping opacity-60" />
               )}
               <img
                 src={profilePic}
@@ -88,7 +88,7 @@ const VideoCallModal = () => {
             </div>
 
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-100">{name}</h2>
-            <p className="text-cyan-400 font-semibold mt-3 animate-pulse tracking-wide uppercase text-sm">
+            <p className="text-indigo-400 font-semibold mt-3 animate-pulse tracking-wide uppercase text-sm">
               {!callAccepted
                 ? isCalling
                   ? "Calling..."

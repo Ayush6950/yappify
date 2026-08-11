@@ -9,13 +9,13 @@ const IncomingCallModal = () => {
   if (!incomingCall) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-[9999] animate-fade-in p-4">
-      <div className="bg-slate-800 border border-slate-700/80 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-sm sm:w-[350px] text-center transform scale-100 transition-all duration-300">
+    <div className="fixed inset-0 bg-[#0a0e1a]/80 backdrop-blur-md flex justify-center items-center z-[9999] animate-fade-in p-4">
+      <div className="bg-[#1e293b] border border-slate-700/80 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-sm sm:w-[350px] text-center transform scale-100 transition-all duration-300">
         <div className="flex flex-col items-center">
           {/* Avatar with glowing heartbeat animation */}
           <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-cyan-500 animate-ping opacity-25" />
-            <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-md animate-pulse" />
+            <div className="absolute inset-0 rounded-full bg-indigo-500 animate-ping opacity-25" />
+            <div className="absolute inset-0 rounded-full bg-indigo-400/20 blur-md animate-pulse" />
             <img
               src={incomingCall.from?.profilePic || "/avatar.png"}
               alt={incomingCall.from?.fullName}
@@ -27,7 +27,7 @@ const IncomingCallModal = () => {
             {incomingCall.from?.fullName}
           </h2>
 
-          <p className="text-cyan-400 text-sm font-semibold mt-2 animate-pulse tracking-wide uppercase">
+          <p className="text-indigo-400 text-sm font-semibold mt-2 animate-pulse tracking-wide uppercase">
             Incoming {incomingCall.callType === "video" ? "Video" : "Voice"} Call...
           </p>
 

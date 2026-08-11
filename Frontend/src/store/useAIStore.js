@@ -1,11 +1,11 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import toast from "react-hot-toast";
 import { useChatStore } from "./useChatStore";
 
 const API_BASE =
   import.meta.env.MODE === "development"
     ? "http://localhost:5000/api"
-    : "/api";
+    : import.meta.env.VITE_API_URL + "/api";
 
 const parseSSEStream = async (response, onEvent, signal) => {
   const reader = response.body.getReader();
