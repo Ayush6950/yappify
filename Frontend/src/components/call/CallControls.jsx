@@ -18,7 +18,7 @@ const CallControls = ({
 
       <button
         onClick={toggleMute}
-        className="p-3 rounded-full bg-zinc-700 hover:bg-zinc-600 transition"
+        className="p-3 rounded-full bg-slate-800 hover:bg-slate-700 transition"
       >
         {isMuted ? (
           <MicOff className="text-red-400" />
@@ -29,7 +29,7 @@ const CallControls = ({
 
       <button
         onClick={toggleVideo}
-        className="p-3 rounded-full bg-zinc-700 hover:bg-zinc-600 transition"
+        className="p-3 rounded-full bg-slate-800 hover:bg-slate-700 transition"
       >
         {isVideoOff ? (
           <VideoOff className="text-red-400" />
