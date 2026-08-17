@@ -3,6 +3,7 @@ import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+
 import aiRoutes from "./routes/ai.routes.js";
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
@@ -29,11 +30,13 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/ai", aiRoutes);
 
 if (ENV.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../Frontend/dist")));
+  const frontendPath = path.join(__dirname, "../Frontend/dist");
 
- app.get("/{*path}", (req, res) => {
-  res.sendFile(path.join(__dirname, "../Frontend/dist/index.html"));
-});
+  app.use(express.static(frontendPath));
+
+  app.get("/{*path}", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
 }
 
 const startServer = async () => {
