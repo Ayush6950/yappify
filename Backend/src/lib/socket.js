@@ -12,7 +12,21 @@ const server = http.createServer(app);
  
 export const io = new Server(server, {
   cors: {
-    origin: [ENV.CLIENT_URL],
+    origin: (origin, callback) => {
+      const allowed = [
+        ENV.CLIENT_URL,
+        "http://localhost:5173",
+        "http://localhost:5000",
+      ]
+        .filter(Boolean)
+        .map((u) => u.replace(/\/$/, ""));
+
+      if (!origin || allowed.includes(origin.replace(/\/$/, ""))) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Socket CORS: origin not allowed → ${origin}`));
+      }
+    },
     credentials: true,
   },
 });
