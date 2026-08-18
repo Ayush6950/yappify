@@ -3,6 +3,8 @@ import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
 import aiRoutes from "./routes/ai.routes.js";
 import { ENV } from "./lib/env.js";
@@ -11,7 +13,8 @@ import { app, server } from "./lib/socket.js";
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const PORT = ENV.PORT || 3000;
 
 app.use(express.json());
@@ -45,13 +48,24 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/ai", aiRoutes);
 
 if (ENV.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../Frontend/dist");
+  const frontendPath = path.join(__dirname, "../../Frontend/dist");
 
-  app.use(express.static(frontendPath));
+  if (fs.existsSync(frontendPath)) {
+    app.use(express.static(frontendPath));
 
-  app.get("/{*path}", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(frontendPath, "index.html"));
+    });
+  } else {
+    // If frontend is deployed separately (e.g., on Vercel), serve a status JSON
+    app.get("*", (req, res) => {
+      res.json({
+        status: "success",
+        message: "Yappify API is running in production.",
+        frontend_served_locally: false
+      });
+    });
+  }
 }
 
 const startServer = async () => {
