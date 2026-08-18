@@ -6,7 +6,7 @@ const groq = new OpenAI({
   baseURL: "https://api.groq.com/openai/v1",
 });
 
-const DEFAULT_MODEL = "llama-3.3-70b-versatile"; // or llama-3.1-8b-instant (faster)
+const DEFAULT_MODEL = "llama-3.1-8b-instant"; // or llama-3.1-8b-instant (faster)
 
 export const complete = async ({ systemPrompt, userPrompt, temperature = 0.3 }) => {
   if (!ENV.GROQ_API_KEY) {
