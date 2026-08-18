@@ -2,15 +2,246 @@ import cloudinary from "../lib/cloundinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.js";
 import User from "../models/user.js";
+import ChatRequest from "../models/chatRequest.js";
+import Conversation from "../models/conversation.js";
 
 export const getAllContacts = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
-    const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+    const { search = "" } = req.query;
+    const trimmedSearch = search.trim();
 
-    res.status(200).json(filteredUsers);
+    // Fetch current user's requests and active conversations
+    const [sentRequests, receivedRequests, conversations] = await Promise.all([
+      ChatRequest.find({ senderId: loggedInUserId }),
+      ChatRequest.find({ receiverId: loggedInUserId }),
+      Conversation.find({ participants: loggedInUserId, isActive: true }),
+    ]);
+
+    const sentRequestTargetIds = sentRequests.map((r) => r.receiverId.toString());
+    const receivedRequestSenderIds = receivedRequests.map((r) => r.senderId.toString());
+    const conversationPartnerIds = conversations.flatMap((c) =>
+      c.participants.filter((p) => p.toString() !== loggedInUserId.toString()).map((p) => p.toString())
+    );
+
+    // Build user query
+    const query = { _id: { $ne: loggedInUserId } };
+    if (trimmedSearch) {
+      query.$or = [
+        { fullName: { $regex: trimmedSearch, $options: "i" } },
+        { email: { $regex: trimmedSearch, $options: "i" } },
+      ];
+    } else {
+      const relatedUserIds = [
+        ...sentRequestTargetIds,
+        ...receivedRequestSenderIds,
+        ...conversationPartnerIds,
+      ];
+      query._id = { $in: relatedUserIds, $ne: loggedInUserId };
+    }
+
+    const filteredUsers = await User.find(query).select("-password");
+
+    // Map requestStatus based on ChatRequest and Conversation status
+    const usersWithRequestStatus = filteredUsers.map((user) => {
+      const userId = user._id.toString();
+      let requestStatus = "none";
+
+      if (conversationPartnerIds.includes(userId)) {
+        requestStatus = "contact";
+      } else {
+        const sentReq = sentRequests.find((r) => r.receiverId.toString() === userId);
+        const receivedReq = receivedRequests.find((r) => r.senderId.toString() === userId);
+
+        if (sentReq) {
+          requestStatus = sentReq.status === "accepted" ? "contact" : sentReq.status === "rejected" ? "none" : "sent";
+        } else if (receivedReq) {
+          requestStatus = receivedReq.status === "accepted" ? "contact" : receivedReq.status === "rejected" ? "none" : "received";
+        }
+      }
+
+      return {
+        ...user.toObject(),
+        requestStatus,
+      };
+    });
+
+    res.status(200).json(usersWithRequestStatus);
   } catch (error) {
     console.log("Error in getAllContacts:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const sendContactRequest = async (req, res) => {
+  try {
+    const senderId = req.user._id;
+    const { id: targetId } = req.params;
+
+    if (senderId.toString() === targetId) {
+      return res.status(400).json({ message: "You cannot send a request to yourself." });
+    }
+
+    const targetUser = await User.findById(targetId);
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Check if there is already an active conversation
+    const existingConversation = await Conversation.findOne({
+      participants: { $all: [senderId, targetId] },
+      isActive: true,
+    });
+    if (existingConversation) {
+      return res.status(400).json({ message: "You are already contacts." });
+    }
+
+    // Check if there is an existing request
+    const existingRequest = await ChatRequest.findOne({
+      $or: [
+        { senderId, receiverId: targetId },
+        { senderId: targetId, receiverId: senderId },
+      ],
+    });
+
+    if (existingRequest) {
+      if (existingRequest.status === "pending") {
+        return res.status(400).json({ message: "Request already pending." });
+      }
+      if (existingRequest.status === "accepted") {
+        return res.status(400).json({ message: "You are already connected." });
+      }
+      if (existingRequest.status === "rejected") {
+        // Reset the request to pending with the current user as sender
+        existingRequest.senderId = senderId;
+        existingRequest.receiverId = targetId;
+        existingRequest.status = "pending";
+        await existingRequest.save();
+      }
+    } else {
+      const newRequest = new ChatRequest({
+        senderId,
+        receiverId: targetId,
+        status: "pending",
+      });
+      await newRequest.save();
+    }
+
+    // notify target user via socket if online
+    const receiverSocketId = getReceiverSocketId(targetId.toString());
+    if (receiverSocketId) {
+      const sender = await User.findById(senderId).select("fullName email profilePic");
+      io.to(receiverSocketId).emit("contact_request", {
+        from: {
+          id: sender._id.toString(),
+          fullName: sender.fullName,
+          email: sender.email,
+          profilePic: sender.profilePic,
+        },
+      });
+    }
+
+    res.status(200).json({
+      message: "Chat request sent successfully.",
+      requestStatus: "sent",
+    });
+  } catch (error) {
+    console.log("Error in sendContactRequest:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const acceptContactRequest = async (req, res) => {
+  try {
+    const currentUserId = req.user._id;
+    const { id: requesterId } = req.params;
+
+    const request = await ChatRequest.findOne({
+      senderId: requesterId,
+      receiverId: currentUserId,
+      status: "pending",
+    });
+
+    if (!request) {
+      return res.status(400).json({ message: "No pending request from this user." });
+    }
+
+    request.status = "accepted";
+    await request.save();
+
+    // Create or activate conversation
+    let conversation = await Conversation.findOne({
+      participants: { $all: [currentUserId, requesterId] },
+    });
+
+    if (conversation) {
+      conversation.isActive = true;
+      await conversation.save();
+    } else {
+      conversation = new Conversation({
+        participants: [currentUserId, requesterId],
+        isActive: true,
+      });
+      await conversation.save();
+    }
+
+    // notify requester via socket if online
+    const requesterSocketId = getReceiverSocketId(requesterId.toString());
+    if (requesterSocketId) {
+      const currentUser = await User.findById(currentUserId).select("fullName email profilePic");
+      io.to(requesterSocketId).emit("contact_request_accepted", {
+        by: {
+          id: currentUser._id.toString(),
+          fullName: currentUser.fullName,
+          email: currentUser.email,
+          profilePic: currentUser.profilePic,
+        },
+      });
+    }
+
+    res.status(200).json({
+      message: "Chat request accepted.",
+      requestStatus: "contact",
+    });
+  } catch (error) {
+    console.log("Error in acceptContactRequest:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const rejectContactRequest = async (req, res) => {
+  try {
+    const currentUserId = req.user._id;
+    const { id: requesterId } = req.params;
+
+    const request = await ChatRequest.findOne({
+      senderId: requesterId,
+      receiverId: currentUserId,
+      status: "pending",
+    });
+
+    if (!request) {
+      return res.status(404).json({ message: "No pending request found." });
+    }
+
+    request.status = "rejected";
+    await request.save();
+
+    // notify requester via socket if online
+    const requesterSocketId = getReceiverSocketId(requesterId.toString());
+    if (requesterSocketId) {
+      const currentUser = await User.findById(currentUserId).select("fullName");
+      io.to(requesterSocketId).emit("contact_request_rejected", {
+        by: {
+          id: currentUser._id.toString(),
+          fullName: currentUser.fullName,
+        },
+      });
+    }
+
+    res.status(200).json({ message: "Chat request rejected." });
+  } catch (error) {
+    console.log("Error in rejectContactRequest:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -19,6 +250,15 @@ export const getMessagesByUserId = async (req, res) => {
   try {
     const myId = req.user._id;
     const { id: userToChatId } = req.params;
+
+    const activeConversation = await Conversation.findOne({
+      participants: { $all: [myId, userToChatId] },
+      isActive: true,
+    });
+
+    if (!activeConversation) {
+      return res.status(403).json({ message: "You can only chat with accepted contacts." });
+    }
 
     const messages = await Message.find({
       $or: [
@@ -46,14 +286,18 @@ export const sendMessage = async (req, res) => {
     if (senderId.equals(receiverId)) {
       return res.status(400).json({ message: "Cannot send messages to yourself." });
     }
-    const receiverExists = await User.exists({ _id: receiverId });
-    if (!receiverExists) {
-      return res.status(404).json({ message: "Receiver not found." });
+
+    const activeConversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+      isActive: true,
+    });
+
+    if (!activeConversation) {
+      return res.status(403).json({ message: "Chat is only available after the request is accepted." });
     }
 
     let imageUrl;
     if (image) {
-      // upload base64 image to cloudinary
       const uploadResponse = await cloudinary.uploader.upload(image);
       imageUrl = uploadResponse.secure_url;
     }
@@ -117,22 +361,20 @@ export const getChatPartners = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
 
-    // find all the messages where the logged-in user is either sender or receiver
-    const messages = await Message.find({
-      $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }],
+    const conversations = await Conversation.find({
+      participants: loggedInUserId,
+      isActive: true,
     });
 
-    const chatPartnerIds = [
-      ...new Set(
-        messages.map((msg) =>
-          msg.senderId.toString() === loggedInUserId.toString()
-            ? msg.receiverId.toString()
-            : msg.senderId.toString()
-        )
-      ),
-    ];
+    if (conversations.length === 0) {
+      return res.status(200).json([]);
+    }
 
-    const chatPartners = await User.find({ _id: { $in: chatPartnerIds } }).select("-password");
+    const partnerIds = conversations.flatMap((c) =>
+      c.participants.filter((p) => p.toString() !== loggedInUserId.toString())
+    );
+
+    const chatPartners = await User.find({ _id: { $in: partnerIds } }).select("-password");
 
     res.status(200).json(chatPartners);
   } catch (error) {

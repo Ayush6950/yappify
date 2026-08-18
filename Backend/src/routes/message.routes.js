@@ -1,6 +1,9 @@
 import express from "express";
 import {
   getAllContacts,
+  sendContactRequest,
+  acceptContactRequest,
+  rejectContactRequest,
   getMessagesByUserId,
   sendMessage,
   getChatPartners,
@@ -17,6 +20,9 @@ const router = express.Router();
 router.use(protectRoute);
 
 router.get("/contacts", getAllContacts);
+router.post("/contact-request/:id", sendContactRequest);
+router.post("/contact-request/:id/accept", acceptContactRequest);
+router.post("/contact-request/:id/reject", rejectContactRequest);
 router.get("/chats", getChatPartners);
 router.get("/:id", getMessagesByUserId);
 router.post("/send/:id", sendMessage);
@@ -25,4 +31,4 @@ router.put("/:id", editMessage);
 router.delete("/:id", deleteMessage);
 router.post("/:id/react", reactToMessage);
 
-export default router;
+export default router;

@@ -10,7 +10,6 @@ import ChatContainer from "../components/ChatContainer";
 import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
 import AIPanel from "../components/AIPanel";
 import AIChatConversation from "../components/AIChatConversation";
-
 function ChatPage() {
   const { activeTab, selectedUser } = useChatStore();
   const { isPanelOpen, closePanel } = useAIStore();
@@ -27,6 +26,7 @@ function ChatPage() {
         {/* LEFT SIDEBAR */}
         <div className={`w-full sm:w-96 flex flex-col sm:border-r border-slate-700/40 bg-slate-950/10 shrink-0 ${selectedUser ? "hidden sm:flex" : "flex"}`}>
           <ProfileHeader />
+
           <ActiveTabSwitch />
 
           {/* List Container */}
