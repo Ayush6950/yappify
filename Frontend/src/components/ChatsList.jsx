@@ -1,13 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 import NoChatsFound from "./NoChatsFound";
 import { useAuthStore } from "../store/useAuthStore";
-import { Bot, VolumeXIcon } from "lucide-react";
+import { Bot, VolumeXIcon, Search } from "lucide-react";
 
 function ChatsList() {
   const { getMyChatPartners, chats, isUsersLoading, setSelectedUser, selectedUser, unreadCounts, mutedUsers } = useChatStore();
   const { onlineUsers } = useAuthStore();
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     getMyChatPartners();
@@ -16,8 +17,25 @@ function ChatsList() {
   if (isUsersLoading) return <UsersLoadingSkeleton />;
   const aiProfile = { _id: "ai-assistant", fullName: "AI Assistant", isAIProfile: true };
 
+  const filteredChats = chats.filter((chat) =>
+    chat.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
+      <div className="mb-3">
+        <label className="relative block">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search chats..."
+            className="w-full rounded-xl border border-slate-700 bg-slate-900/60 py-2.5 pl-9 pr-3 text-sm text-slate-200 placeholder:text-slate-400 outline-none ring-0 focus:border-indigo-500"
+          />
+        </label>
+      </div>
+
       <div
         className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 border ${selectedUser?._id === aiProfile._id ? "bg-violet-500/10 border-violet-500/35" : "bg-transparent hover:bg-violet-500/5 border-slate-700/30 hover:border-violet-500/25"}`}
         onClick={() => setSelectedUser(aiProfile)}
@@ -28,8 +46,8 @@ function ChatsList() {
         </div>
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-350 border border-violet-500/20">AI</span>
       </div>
-      {chats.length === 0 && <NoChatsFound />}
-      {chats.map((chat) => {
+      {filteredChats.length === 0 && <NoChatsFound />}
+      {filteredChats.map((chat) => {
         const unreadCount = unreadCounts[chat._id] || 0;
         const isMuted = mutedUsers.includes(chat._id);
 

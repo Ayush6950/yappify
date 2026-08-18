@@ -207,6 +207,27 @@ export const useAuthStore = create((set, get) => ({
     });
 
     // =========================
+    // Contact request events
+    // =========================
+    newSocket.on("contact_request", (data) => {
+      // refresh contact list so the receiver sees the incoming request
+      useChatStore.getState().getAllContacts();
+      toast.success(`${data.from.fullName} sent you a chat request`);
+    });
+
+    newSocket.on("contact_request_accepted", (data) => {
+      // refresh contacts and chats for the requester
+      useChatStore.getState().getMyChatPartners();
+      useChatStore.getState().getAllContacts();
+      toast.success(`${data.by.fullName} accepted your chat request`);
+    });
+
+    newSocket.on("contact_request_rejected", (data) => {
+      useChatStore.getState().getAllContacts();
+      toast.error(`${data.by.fullName} rejected your chat request`);
+    });
+
+    // =========================
     // Online Users
     // =========================
 
