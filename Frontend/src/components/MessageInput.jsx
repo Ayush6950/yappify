@@ -1,9 +1,8 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import useKeyboardSound from "../hooks/useKeyboardSound";
 import { useChatStore } from "../store/useChatStore";
 import toast from "react-hot-toast";
 import {
-  ImageIcon,
   SendIcon,
   XIcon,
   Smile,
@@ -12,30 +11,34 @@ import {
   Play,
   Music,
   Reply,
+  UploadCloud,
 } from "lucide-react";
 
 const EMOJI_CATEGORIES = {
-  "Smileys & Emotion": ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🥸", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🫣", "🤭", "🤫", "🤥", "😶", "😶‍🌫️", "😐", "😑", "😬", "🫨", "🫠", "🫥", "😴", "🥱", "🤤", "😪", "😮‍🌫️", "😵", "😵‍💫", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾"],
-  "Gestures & People": ["👋", "🤚", "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🧠", "🫀", "🫁", "🦷", "🦴", "👀", "👁️", "👅", "👄", "💋", "🩸"],
+  "Smileys & Emotion": ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🥸", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🫣", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🫨", "🫠", "🫥", "😴", "🥱", "🤤", "😪", "😵", "😵‍💫", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾"],
+  "Gestures & People": ["👋", "🤚", "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🧠", "🫀", "🫁", "🦷", "🦴", "👀", "👁️", "👅", "👄", "💋", "🩸"],
   "Hearts & Activities": ["❤️", "🩷", "🧡", "💛", "💚", "💙", "🩵", "💜", "🖤", "🩶", "🤍", "🤎", "💔", "❤️‍🔥", "❤️‍🩹", "❣️", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🥏", "🏓", "🏸", "🏒", "🏹", "🎣", "🤿", "🥊", "🥋", "🛹", "🛼", "🏋️", "⛹️", "🤺", "🚴", "🧗", "🧘", "🏆", "🥇", "🥈", "🥉", "🏅", "🎫", "🎟️", "🎭", "🎨", "🎬", "🎤", "🎧", "🎼", "🎹", "🎸", "🎺", "🎮", "🎲", "♟️"],
-  "Travel & Food": ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚜", "🛵", "🏍️", "🚲", "🛺", "🚂", "✈️", "🚀", "🛸", "⛵", "⚓", "🍕", "🍔", "🍟", "🌭", "🍿", "🍳", "🧇", "🥞", "🍞", "🥐", "🥖", " pretzel", "🥯", "🥪", "🌮", "🌯", "🥗", "🍜", "🍝", "寿司", "🍤", "🍺", "🍷", "☕", "🥤"],
-  "Symbols & Objects": ["🔑", "🗝️", "🔨", "🪓", "⛏️", "🔧", "⚙️", "🔩", "🧱", "🪚", "🪛", "⛓️", "🛒", "🧲", "🔫", "💣", "🧨", "🔮", "📿", "🧿", "🩹", "🩺", "🧪", "🧫", "🔬", "🔭", "📡", "🪞", "🪟", "🪠", "🎈", "🎉", "🎊", "🪄", "📸", "💻", "🖥️", "🖱️", "📚", "📕", "📖", "📄", "✉️", "📦", "🪙", "💰", "💳", "💎", "⏳", "⏰", "💡", "🔦", "🗑️", "💬", "💭", "💤"],
+  "Travel & Food": ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚜", "🛵", "🏍️", "🚲", "🛺", "🚂", "✈️", "🚀", "🛸", "⛵", "⚓", "🍕", "🍔", "🍟", "🌭", "🍿", "🍳", "🧇", "🥞", "🍞", "🥐", "🥖", "🥨", "🥯", "🥪", "🌮", "🌯", "🥗", "🍜", "🍝", "🍣", "🍤", "🍺", "🍷", "☕", "🥤"],
+  "Symbols & Objects": ["🔑", "🗝️", "🔨", "🪓", "⛏️", "🔧", "⚙️", "🔩", "🧱", "🪚", "🪛", "⛓️", "🛒", "🧲", "💣", "🧨", "🔮", "📿", "🧿", "🩹", "🩺", "🧪", "🧫", "🔬", "🔭", "📡", "🪞", "🪟", "🪠", "🎈", "🎉", "🎊", "🪄", "📸", "💻", "🖥️", "🖱️", "📚", "📕", "📖", "📄", "✉️", "📦", "🪙", "💰", "💳", "💎", "⏳", "⏰", "💡", "🔦", "🗑️", "💬", "💭", "💤"],
 };
 
-const applySkinTone = (emoji, tone) => {
-  if (!tone) return emoji;
-  const modifiable = ["👋", "🤚", "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦵", "🦶", "👂", "🦻", "👃"];
-  if (modifiable.includes(emoji)) {
-    return emoji + tone;
-  }
-  return emoji;
-};
+const SKIN_TONES = ["", "🏻", "🏼", "🏽", "🏾", "🏿"];
+
+const TONE_MODIFIABLE = new Set([
+  "👋", "🤚", "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙",
+  "👈", "👉", "👆", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐",
+  "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦵", "🦶", "👂", "🦻", "👃",
+]);
+
+const applySkinTone = (emoji, tone) =>
+  tone && TONE_MODIFIABLE.has(emoji) ? emoji + tone : emoji;
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 function MessageInput() {
   const { playRandomKeyStrokeSound } = useKeyboardSound();
   const [text, setText] = useState("");
   const [fileAttachment, setFileAttachment] = useState(null); // { name, size, type, url }
-  const [isFocused, setIsFocused] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [emojiSearch, setEmojiSearch] = useState("");
@@ -44,6 +47,7 @@ function MessageInput() {
 
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
+  const emojiPickerRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const [isTyping, setIsTyping] = useState(false);
 
@@ -59,6 +63,18 @@ function MessageInput() {
     clearDraftMessage,
   } = useChatStore();
 
+  /** Keep the composer height matched to its content, up to a ceiling. */
+  const autoGrow = useCallback(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, []);
+
+  useEffect(() => {
+    autoGrow();
+  }, [text, autoGrow]);
+
   // Sync AI draft into composer
   useEffect(() => {
     if (draftMessage) {
@@ -67,6 +83,30 @@ function MessageInput() {
       inputRef.current?.focus();
     }
   }, [draftMessage, clearDraftMessage]);
+
+  // Focus the composer when a reply is queued up
+  useEffect(() => {
+    if (replyingTo) inputRef.current?.focus();
+  }, [replyingTo]);
+
+  // Dismiss the emoji picker on outside click / Escape
+  useEffect(() => {
+    if (!showEmojiPicker) return;
+
+    const handleClickOutside = (e) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+    const handleEsc = (e) => e.key === "Escape" && setShowEmojiPicker(false);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [showEmojiPicker]);
 
   const [recentEmojis, setRecentEmojis] = useState(() => {
     return JSON.parse(localStorage.getItem("recent_emojis")) || ["👍", "❤️", "😂", "😮", "😢", "🙏"];
@@ -119,9 +159,17 @@ function MessageInput() {
     }
   };
 
+  // Enter sends, Shift+Enter inserts a newline
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(e);
+    }
+  };
+
   const processFile = (file) => {
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File exceeds 10MB size limit");
+    if (file.size > MAX_FILE_BYTES) {
+      toast.error("File exceeds the 10MB size limit");
       return;
     }
 
@@ -151,6 +199,7 @@ function MessageInput() {
     setText((prev) => prev + emoji);
     saveRecentEmoji(emoji);
     if (isSoundEnabled) playRandomKeyStrokeSound();
+    inputRef.current?.focus();
   };
 
   const handleDragOver = (e) => {
@@ -158,7 +207,9 @@ function MessageInput() {
     setIsDragging(true);
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (e) => {
+    // Ignore drags moving between children of the drop zone
+    if (e.currentTarget.contains(e.relatedTarget)) return;
     setIsDragging(false);
   };
 
@@ -171,107 +222,111 @@ function MessageInput() {
 
   const hasContent = text.trim() || fileAttachment;
 
-  return (
-    <>
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`relative p-4 border-t border-slate-700/40 bg-slate-950/20 backdrop-blur-sm transition-all ${
-          isDragging ? "border-indigo-500 bg-indigo-500/10" : ""
-        }`}
-      >
-        {isDragging && (
-          <div className="absolute inset-0 flex items-center justify-center bg-indigo-500/10 backdrop-blur-sm z-50 pointer-events-none">
-            <p className="text-indigo-400 font-medium">Drop your file here to upload</p>
-          </div>
-        )}
+  // Emoji search matches on category name — the only text we actually have per emoji
+  const query = emojiSearch.trim().toLowerCase();
+  const visibleCategories = query
+    ? Object.entries(EMOJI_CATEGORIES).filter(([name]) => name.toLowerCase().includes(query))
+    : Object.entries(EMOJI_CATEGORIES);
 
-        {/* Reply Quote Preview */}
+  return (
+    <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className="relative flex-none border-t border-white/[0.07] bg-black/25 px-3 py-3 backdrop-blur-xl sm:px-4 sm:py-4"
+    >
+      {/* ---------- Drop target ---------- */}
+      {isDragging && (
+        <div className="pointer-events-none absolute inset-2 z-50 grid place-items-center rounded-2xl border-2 border-dashed border-indigo-400/60 bg-indigo-500/10 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-2 text-indigo-200">
+            <UploadCloud className="size-7" />
+            <p className="text-sm font-medium">Drop to attach</p>
+          </div>
+        </div>
+      )}
+
+      <div className="mx-auto max-w-3xl">
+        {/* ---------- Reply preview ---------- */}
         {replyingTo && (
-          <div className="max-w-3xl mx-auto mb-3 flex items-center justify-between bg-slate-900/60 border border-slate-800 rounded-lg p-3 animate-slide-up">
-            <div className="flex items-center gap-3">
-              <Reply className="w-5 h-5 text-indigo-400" />
-              <div className="text-left">
-                <p className="text-xs text-indigo-400 font-semibold">Replying to message</p>
-                <p className="text-sm text-slate-350 truncate max-w-lg">
+          <div className="mb-2 flex items-center justify-between gap-3 rounded-xl border-l-2 border-indigo-400 bg-white/[0.04] py-2 pl-3 pr-2 animate-slide-up">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <Reply className="size-4 shrink-0 text-indigo-400" />
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-indigo-300">Replying to message</p>
+                <p className="truncate text-sm text-slate-400">
                   {replyingTo.text || (replyingTo.media ? "Shared media file" : "Shared image")}
                 </p>
               </div>
             </div>
             <button
               onClick={() => setReplyingTo(null)}
-              className="p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition"
+              className="shrink-0 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-white/[0.06] hover:text-slate-200"
+              title="Cancel reply"
             >
-              <XIcon className="w-4 h-4" />
+              <XIcon className="size-4" />
             </button>
           </div>
         )}
 
-        {/* Media / File Attachment Preview */}
+        {/* ---------- Attachment preview ---------- */}
         {fileAttachment && (
-          <div className="max-w-3xl mx-auto mb-4 animate-slide-up text-left">
-            <div className="relative group inline-block bg-slate-900 border border-slate-800 rounded-lg p-3 pr-10">
-              <div className="flex items-center gap-3">
-                {fileAttachment.type === "image" && (
-                  <img
-                    src={fileAttachment.url}
-                    alt="Preview"
-                    className="w-12 h-12 object-cover rounded border border-slate-800"
-                  />
-                )}
-                {fileAttachment.type === "video" && (
-                  <div className="w-12 h-12 bg-slate-950 rounded flex items-center justify-center text-indigo-400">
-                    <Play className="w-5 h-5" />
-                  </div>
-                )}
-                {fileAttachment.type === "audio" && (
-                  <div className="w-12 h-12 bg-slate-950 rounded flex items-center justify-center text-indigo-400">
-                    <Music className="w-5 h-5" />
-                  </div>
-                )}
-                {fileAttachment.type === "file" && (
-                  <div className="w-12 h-12 bg-slate-950 rounded flex items-center justify-center text-indigo-400">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm text-slate-200 font-medium truncate max-w-xs">{fileAttachment.name}</p>
-                  <p className="text-xs text-slate-400">{(fileAttachment.size / 1024).toFixed(1)} KB</p>
-                </div>
+          <div className="mb-2 animate-slide-up">
+            <div className="relative inline-flex items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.04] p-2.5 pr-10">
+              {fileAttachment.type === "image" ? (
+                <img
+                  src={fileAttachment.url}
+                  alt="Preview"
+                  className="size-11 rounded-lg border border-white/[0.08] object-cover"
+                />
+              ) : (
+                <span className="grid size-11 place-items-center rounded-lg bg-indigo-500/15 text-indigo-300">
+                  {fileAttachment.type === "video" && <Play className="size-5" />}
+                  {fileAttachment.type === "audio" && <Music className="size-5" />}
+                  {fileAttachment.type === "file" && <FileText className="size-5" />}
+                </span>
+              )}
+              <div className="min-w-0">
+                <p className="max-w-[16rem] truncate text-sm font-medium text-slate-100">
+                  {fileAttachment.name}
+                </p>
+                <p className="text-xs text-slate-500">{(fileAttachment.size / 1024).toFixed(1)} KB</p>
               </div>
               <button
                 onClick={() => setFileAttachment(null)}
-                className="absolute -top-3 -right-3 w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center text-white transition-all shadow"
+                className="absolute right-2 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full bg-white/[0.08] text-slate-300 transition-colors hover:bg-red-500 hover:text-white"
+                title="Remove attachment"
               >
-                <XIcon className="w-3.5 h-3.5" />
+                <XIcon className="size-3.5" />
               </button>
             </div>
           </div>
         )}
 
-        {/* Emoji Picker Modal */}
+        {/* ---------- Emoji picker ---------- */}
         {showEmojiPicker && (
-          <div className="absolute bottom-20 left-2 right-2 sm:left-4 sm:right-auto z-50 sm:w-72 h-80 bg-slate-950 border border-slate-700/50 rounded-xl shadow-xl p-3 flex flex-col animate-slide-up">
-            <div className="flex items-center justify-between mb-2">
+          <div
+            ref={emojiPickerRef}
+            className="absolute bottom-full left-2 right-2 z-50 mb-2 flex h-80 flex-col rounded-2xl border border-white/[0.09] bg-brand-surface-card/95 p-3 shadow-raised backdrop-blur-2xl animate-slide-up sm:left-4 sm:right-auto sm:w-80"
+          >
+            <div className="mb-2 flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Search emojis..."
+                placeholder="Filter categories..."
                 value={emojiSearch}
                 onChange={(e) => setEmojiSearch(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200 placeholder-slate-650 focus:outline-none focus:border-indigo-500 focus:bg-slate-900/80"
+                className="min-w-0 flex-1 rounded-lg border border-white/[0.08] bg-black/30 px-2.5 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-400/60 focus:outline-none"
               />
-              <div className="flex items-center gap-0.5 ml-2">
-                {["", "🏻", "🏼", "🏽", "🏾", "🏿"].map((tone) => (
+              <div className="flex shrink-0 items-center gap-0.5">
+                {SKIN_TONES.map((tone) => (
                   <button
-                    key={tone}
+                    key={tone || "default"}
                     onClick={() => setSelectedSkinTone(tone)}
-                    className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] border transition ${
+                    className={`grid size-5 place-items-center rounded-full border text-[10px] transition ${
                       selectedSkinTone === tone
-                        ? "border-indigo-500 bg-slate-800"
-                        : "border-transparent hover:bg-slate-900"
+                        ? "border-indigo-400/70 bg-indigo-500/20"
+                        : "border-transparent hover:bg-white/[0.07]"
                     }`}
-                    title={tone ? `Skin Tone ${tone}` : "Default Tone"}
+                    title={tone ? "Skin tone" : "Default tone"}
                   >
                     {tone || "🫱"}
                   </button>
@@ -279,151 +334,115 @@ function MessageInput() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto pr-1 text-left space-y-3">
-              {emojiSearch ? (
+            <div className="flex-1 space-y-3 overflow-y-auto pr-1 text-left">
+              {!query && recentEmojis.length > 0 && (
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">
-                    Search Results
-                  </h4>
-                  <div className="grid grid-cols-6 gap-1">
-                    {Object.values(EMOJI_CATEGORIES)
-                      .flat()
-                      .filter((emoji) => emoji.includes(emojiSearch) || emojiSearch === "")
-                      .slice(0, 36)
-                      .map((emoji) => {
+                  <h4 className="label-caps mb-1.5">Recent</h4>
+                  <div className="grid grid-cols-8 gap-0.5">
+                    {recentEmojis.map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => handleEmojiClick(emoji)}
+                        className="rounded-lg py-1 text-lg transition hover:scale-125 hover:bg-white/[0.06] active:scale-90"
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {visibleCategories.length === 0 ? (
+                <p className="py-6 text-center text-xs text-slate-500">
+                  No category matches &ldquo;{emojiSearch}&rdquo;
+                </p>
+              ) : (
+                visibleCategories.map(([cat, list]) => (
+                  <div key={cat}>
+                    <h4 className="label-caps mb-1.5">{cat}</h4>
+                    <div className="grid grid-cols-8 gap-0.5">
+                      {list.map((emoji) => {
                         const modifiedEmoji = applySkinTone(emoji, selectedSkinTone);
                         return (
                           <button
                             key={emoji}
                             onClick={() => handleEmojiClick(modifiedEmoji)}
-                            className="text-lg hover:scale-125 transition active:scale-90"
+                            className="rounded-lg py-1 text-lg transition hover:scale-125 hover:bg-white/[0.06] active:scale-90"
                           >
                             {modifiedEmoji}
                           </button>
                         );
                       })}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <>
-                  {recentEmojis.length > 0 && (
-                    <div>
-                      <h4 className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">
-                        Recent
-                      </h4>
-                      <div className="grid grid-cols-6 gap-1">
-                        {recentEmojis.map((emoji) => (
-                          <button
-                            key={emoji}
-                            onClick={() => handleEmojiClick(emoji)}
-                            className="text-lg hover:scale-125 transition active:scale-90"
-                          >
-                            {emoji}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {Object.entries(EMOJI_CATEGORIES).map(([cat, list]) => (
-                    <div key={cat}>
-                      <h4 className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">
-                        {cat}
-                      </h4>
-                      <div className="grid grid-cols-6 gap-1">
-                        {list.slice(0, 18).map((emoji) => {
-                          const modifiedEmoji = applySkinTone(emoji, selectedSkinTone);
-                          return (
-                            <button
-                              key={emoji}
-                              onClick={() => handleEmojiClick(modifiedEmoji)}
-                              className="text-lg hover:scale-125 transition active:scale-90"
-                            >
-                              {modifiedEmoji}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </>
+                ))
               )}
             </div>
           </div>
         )}
 
-        {/* Input Form */}
-        <form onSubmit={handleSendMessage} className="max-w-3xl mx-auto flex items-end gap-1.5 sm:gap-3">
-          {/* Emoji Picker Button */}
-          <button
-            type="button"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className={`p-3 rounded-lg bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all ${
-              showEmojiPicker ? "text-indigo-400 bg-indigo-500/10" : ""
-            }`}
-            title="Emoji picker"
-          >
-            <Smile className="w-5 h-5" />
-          </button>
+        {/* ---------- Composer ---------- */}
+        <form onSubmit={handleSendMessage} className="flex items-end gap-2">
+          <div className="flex flex-1 items-end gap-1 rounded-2xl border border-white/[0.08] bg-black/30 p-1.5 transition-all duration-200 focus-within:border-indigo-400/50 focus-within:bg-black/45 focus-within:ring-4 focus-within:ring-indigo-500/10">
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className={`icon-btn shrink-0 ${showEmojiPicker ? "icon-btn-active" : ""}`}
+              title="Emoji"
+            >
+              <Smile className="size-5" />
+            </button>
 
-          {/* Paperclip File Upload Button */}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="p-3 rounded-lg bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all"
-            title="Attach file"
-          >
-            <Paperclip className="w-5 h-5" />
-          </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="icon-btn shrink-0"
+              title="Attach file"
+            >
+              <Paperclip className="size-5" />
+            </button>
 
-          {/* Text Input */}
-          <div className="flex-1 relative group">
-            <input
+            <textarea
               ref={inputRef}
-              type="text"
+              rows={1}
               value={text}
               onChange={handleInputChange}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              className={`relative w-full bg-slate-900/60 border border-slate-800 rounded-lg py-3 px-4 text-slate-200 placeholder-slate-600 transition-all duration-300 focus:outline-none focus:bg-slate-900 focus:border-indigo-500 ${
-                isFocused ? "shadow-sm shadow-indigo-500/10" : ""
-              }`}
-              placeholder="Type your message..."
+              onKeyDown={handleKeyDown}
+              placeholder="Type a message..."
+              className="max-h-40 min-w-0 flex-1 resize-none self-center bg-transparent px-1 py-2 text-sm leading-relaxed text-slate-100 placeholder-slate-500 outline-none scrollbar-none"
             />
           </div>
 
-          {/* Send Button */}
           <button
             type="submit"
             disabled={!hasContent || isSending}
-            className={`relative px-4 py-3 rounded-lg font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 group disabled:cursor-not-allowed ${
+            className={`grid size-[46px] shrink-0 place-items-center rounded-2xl transition-all duration-300 ${
               hasContent && !isSending
-                ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500/30 active:scale-95 shadow-lg shadow-indigo-500/5"
-                : "bg-slate-900/40 text-slate-600 border border-slate-800/50 cursor-not-allowed"
+                ? "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-glow hover:from-indigo-400 hover:to-violet-500 active:scale-90"
+                : "cursor-not-allowed border border-white/[0.06] bg-white/[0.03] text-slate-600"
             }`}
             title={isSending ? "Sending..." : "Send message"}
           >
-            <div className="relative flex items-center justify-center h-5 w-5">
-              {isSending ? (
-                <div className="w-4 h-4 border-2 border-indigo-200 border-t-white rounded-full animate-spin-fast" />
-              ) : (
-                <SendIcon className="w-5 h-5 transition-all duration-200 group-hover:translate-x-1 group-hover:-translate-y-1 group-active:scale-75" />
-              )}
-            </div>
+            {isSending ? (
+              <span className="size-[18px] rounded-full border-2 border-white/30 border-t-white animate-spin-fast" />
+            ) : (
+              <SendIcon className="size-[18px]" />
+            )}
           </button>
         </form>
 
-        {/* Hidden file input */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-        />
+        <p className="mt-1.5 hidden px-1 text-[10px] text-slate-600 sm:block">
+          <kbd className="rounded border border-white/[0.08] bg-white/[0.04] px-1 font-sans">Enter</kbd> to
+          send &nbsp;·&nbsp;
+          <kbd className="rounded border border-white/[0.08] bg-white/[0.04] px-1 font-sans">Shift</kbd>
+          +
+          <kbd className="rounded border border-white/[0.08] bg-white/[0.04] px-1 font-sans">Enter</kbd> for
+          a new line
+        </p>
       </div>
 
-
-    </>
+      <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+    </div>
   );
 }
 

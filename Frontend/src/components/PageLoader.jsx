@@ -1,26 +1,28 @@
-import React from 'react'
-import { Loader } from 'lucide-react';
+import { MessageCircleIcon } from "lucide-react";
 
 function PageLoader() {
   return (
-    <div className='flex flex-col items-center justify-center h-screen bg-[#0a0e1a] relative overflow-hidden w-full'>
-      {/* Decorative Glows */}
-      <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-indigo-600/10 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-violet-600/10 rounded-full blur-[120px] animate-pulse" />
-      
-      <div className="relative flex flex-col items-center z-10">
-        {/* Animated Loading Spinner */}
-        <div className="relative mb-6 flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin-fast" />
-          <Loader className="absolute w-6 h-6 text-indigo-400 animate-pulse" />
+    <div className="relative flex h-[100dvh] w-full flex-col items-center justify-center overflow-hidden bg-brand-surface-deep">
+      {/* Ambient glow, matching the app shell */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute left-1/4 top-1/4 size-80 rounded-full bg-indigo-600/15 blur-[120px] animate-aurora" />
+        <div className="absolute bottom-1/4 right-1/4 size-80 rounded-full bg-violet-600/15 blur-[120px] animate-aurora animation-delay-500" />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center">
+        <div className="relative mb-7 grid place-items-center">
+          <span className="absolute size-20 rounded-full border-2 border-indigo-500/15" />
+          <span className="absolute size-20 rounded-full border-2 border-transparent border-t-indigo-400 animate-spin-slow" />
+          <span className="grid size-12 place-items-center rounded-2xl border border-indigo-400/25 bg-indigo-500/10">
+            <MessageCircleIcon className="size-6 text-indigo-300" />
+          </span>
         </div>
-        
-        {/* Pulsing Brand Label */}
-        <h2 className="text-3xl font-black bg-gradient-to-r from-indigo-400 via-violet-500 to-indigo-400 bg-clip-text text-transparent animate-pulse select-none tracking-wider">
+
+        <h2 className="text-3xl font-black tracking-tight text-gradient animate-gradient-shift">
           yappify
         </h2>
-        <p className="text-slate-500 text-xs mt-2 select-none tracking-widest uppercase">
-          Initializing Aurora
+        <p className="mt-2 select-none text-[10px] uppercase tracking-[0.28em] text-slate-600">
+          Getting things ready
         </p>
       </div>
     </div>

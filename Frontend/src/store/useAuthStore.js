@@ -22,6 +22,9 @@ export const useAuthStore = create((set, get) => ({
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
+  isSendingReset: false,
+  isResettingPassword: false,
+  isVerifyingEmail: false,
 
   // =========================
   // Check Authentication
@@ -159,6 +162,87 @@ export const useAuthStore = create((set, get) => ({
       set({
         isUpdatingProfile: false,
       });
+    }
+  },
+
+  // =========================
+  // Email Verification
+  // =========================
+  verifyEmail: async (token) => {
+    set({ isVerifyingEmail: true });
+
+    try {
+      await axiosInstance.post("/auth/verify-email", { token });
+
+      toast.success("Email verified!");
+
+      // Refresh authUser so isEmailVerified flips in the UI.
+      await get().checkAuth();
+
+      return true;
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Verification failed"
+      );
+      return false;
+    } finally {
+      set({ isVerifyingEmail: false });
+    }
+  },
+
+  resendVerification: async () => {
+    try {
+      await axiosInstance.post("/auth/resend-verification");
+
+      toast.success("Verification email sent — check your inbox");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Could not send email"
+      );
+    }
+  },
+
+  // =========================
+  // Password Reset
+  // =========================
+  forgotPassword: async (email) => {
+    set({ isSendingReset: true });
+
+    try {
+      const res = await axiosInstance.post("/auth/forgot-password", { email });
+
+      toast.success(res.data.message);
+
+      return true;
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Request failed"
+      );
+      return false;
+    } finally {
+      set({ isSendingReset: false });
+    }
+  },
+
+  resetPassword: async (token, password) => {
+    set({ isResettingPassword: true });
+
+    try {
+      const res = await axiosInstance.post("/auth/reset-password", {
+        token,
+        password,
+      });
+
+      toast.success(res.data.message);
+
+      return true;
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Reset failed"
+      );
+      return false;
+    } finally {
+      set({ isResettingPassword: false });
     }
   },
 
@@ -351,3 +435,4 @@ export const useAuthStore = create((set, get) => ({
     });
   },
 }));
+

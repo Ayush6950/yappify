@@ -182,10 +182,12 @@ export const useChatStore = create((set, get) => ({
     if (socket) socket.emit("typing_end", { to: receiverId });
   },
 
-  getAllContacts: async () => {
+  getAllContacts: async (search = "") => {
     set({ isUsersLoading: true });
     try {
-      const res = await axiosInstance.get("/messages/contacts");
+      const res = await axiosInstance.get("/messages/contacts", {
+        params: { search },
+      });
       set({ allContacts: res.data });
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to load contacts");
@@ -193,6 +195,58 @@ export const useChatStore = create((set, get) => ({
       set({ isUsersLoading: false });
     }
   },
+
+  sendContactRequest: async (userId) => {
+    try {
+      const res = await axiosInstance.post(`/messages/contact-request/${userId}`);
+      set((state) => ({
+        allContacts: state.allContacts.map((contact) =>
+          contact._id === userId ? { ...contact, requestStatus: "sent" } : contact
+        ),
+      }));
+      toast.success(res.data.message || "Request sent successfully");
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to send request");
+      return false;
+    }
+  },
+
+  acceptContactRequest: async (userId) => {
+    try {
+      const res = await axiosInstance.post(`/messages/contact-request/${userId}/accept`);
+      set((state) => ({
+        allContacts: state.allContacts.map((contact) =>
+          contact._id === userId ? { ...contact, requestStatus: "contact" } : contact
+        ),
+      }));
+      toast.success(res.data.message || "Request accepted");
+      await get().getMyChatPartners();
+      await get().getAllContacts();
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to accept request");
+      return false;
+    }
+  },
+
+  rejectContactRequest: async (userId) => {
+    try {
+      const res = await axiosInstance.post(`/messages/contact-request/${userId}/reject`);
+      set((state) => ({
+        allContacts: state.allContacts.map((contact) =>
+          contact._id === userId ? { ...contact, requestStatus: "none" } : contact
+        ),
+      }));
+      toast.success(res.data.message || "Request rejected");
+      await get().getAllContacts();
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to reject request");
+      return false;
+    }
+  },
+
   getMyChatPartners: async () => {
     set({ isUsersLoading: true });
     try {

@@ -1,79 +1,48 @@
 import { MessageCircleIcon } from "lucide-react";
+import { useChatStore } from "../store/useChatStore";
+
+const SUGGESTIONS = [
+  { emoji: "👋", text: "Hey there!" },
+  { emoji: "🤝", text: "How are you doing?" },
+  { emoji: "📅", text: "Free to meet up soon?" },
+];
 
 const NoChatHistoryPlaceholder = ({ name }) => {
-  const suggestions = [
-    { emoji: "👋", text: "Say Hello", delay: 0 },
-    { emoji: "🤝", text: "How are you?", delay: 100 },
-    { emoji: "📅", text: "Meet up soon?", delay: 200 },
-  ];
+  const { setDraftMessage } = useChatStore();
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-4 sm:p-6 bg-transparent animate-fade-in">
-      {/* Icon container with floating animation */}
+    <div className="flex h-full flex-col items-center justify-center px-6 py-10 text-center animate-fade-in">
       <div className="relative mb-6">
-        {/* Icon background */}
-        <div className="
-          relative w-16 h-16 
-          bg-indigo-500/10
-          rounded-full flex items-center justify-center
-          border-2 border-indigo-500/20
-          shadow-sm
-          animate-float
-        ">
-          <MessageCircleIcon className="size-8 text-indigo-400" />
-        </div>
+        <span className="absolute inset-0 rounded-full bg-indigo-500/25 blur-2xl" aria-hidden="true" />
+        <span className="relative grid size-16 place-items-center rounded-2xl border border-indigo-400/25 bg-gradient-to-br from-indigo-500/20 to-violet-500/10 animate-float">
+          <MessageCircleIcon className="size-8 text-indigo-300" />
+        </span>
       </div>
 
-      {/* Heading */}
-      <h3 className="text-lg sm:text-xl font-semibold text-slate-200 mb-4 animate-slide-up">
-        Start your conversation with <span className="font-bold">{name}</span>
+      <h3 className="mb-2 text-lg font-semibold text-slate-100 sm:text-xl animate-slide-up">
+        Say hello to <span className="text-gradient">{name}</span>
       </h3>
 
-      {/* Description section */}
-      <div className="flex flex-col space-y-4 max-w-md mb-8 animate-slide-up animation-delay-150">
-        <p className="text-slate-450 text-sm leading-relaxed">
-          This is the beginning of your conversation. Send a message to start chatting!
-        </p>
+      <p className="mb-8 max-w-sm text-sm leading-relaxed text-slate-500 animate-slide-up animation-delay-150">
+        This is the very beginning of your conversation. Pick a starter below or write your own.
+      </p>
 
-        {/* Animated divider line */}
-        <div className="flex items-center justify-center gap-3">
-          <div className="h-px flex-1 bg-slate-800" />
-          <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-          <div className="h-px flex-1 bg-slate-800" />
-        </div>
-      </div>
-
-      {/* Suggestion buttons */}
-      <div className="flex flex-wrap gap-3 justify-center animate-slide-up animation-delay-300">
-        {suggestions.map((suggestion, index) => (
+      <div className="flex flex-wrap justify-center gap-2 animate-slide-up animation-delay-300">
+        {SUGGESTIONS.map((suggestion) => (
           <button
-            key={index}
-            className={`
-              relative px-4 py-2 text-xs font-medium
-              rounded-full transition-all duration-300 ease-out
-              focus:outline-none focus:ring-2 focus:ring-indigo-500/50
-              overflow-hidden bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20
-              text-indigo-400
-            `}
-            style={{
-              animation: `slideUp 0.5s ease-out ${500 + suggestion.delay}ms both`,
-            }}
-            title={`Send "${suggestion.emoji} ${suggestion.text}"`}
+            key={suggestion.text}
+            type="button"
+            onClick={() => setDraftMessage(`${suggestion.emoji} ${suggestion.text}`)}
+            className="group flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-xs font-medium text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-400/30 hover:bg-indigo-500/10 hover:text-indigo-200"
+            title={`Draft "${suggestion.emoji} ${suggestion.text}"`}
           >
-            {/* Content */}
-            <span className="relative flex items-center gap-2">
-              <span className="inline-block transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-125">
-                {suggestion.emoji}
-              </span>
-              {suggestion.text}
+            <span className="transition-transform duration-300 group-hover:scale-125">
+              {suggestion.emoji}
             </span>
+            {suggestion.text}
           </button>
         ))}
       </div>
-
-      {/* Optional: floating accent elements */}
-      <div className="absolute top-20 left-10 w-2 h-2 bg-indigo-500/20 rounded-full animate-float animation-delay-500" />
-      <div className="absolute bottom-32 right-12 w-1.5 h-1.5 bg-violet-500/20 rounded-full animate-float animation-delay-700" />
     </div>
   );
 };

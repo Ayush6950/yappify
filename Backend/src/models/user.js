@@ -28,6 +28,24 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerifiedAt: {
+      type: Date,
+      default: null,
+    },
+    role: {
+      type: String,
+      enum: ["user", "moderator", "admin"],
+      default: "user",
+    },
+    // Any JWT issued before this timestamp is rejected.
+    passwordChangedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true } // createdAt & updatedAt
 );

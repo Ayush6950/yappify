@@ -12,7 +12,8 @@ import {
   deleteMessage,
   reactToMessage,
 } from "../controllers/message.controller.js";
-import { protectRoute } from "../middleware/auth.middleware.js";
+import { protectRoute, requireVerified } from "../middleware/auth.middleware.js";
+
 
 const router = express.Router();
 
@@ -24,11 +25,14 @@ router.post("/contact-request/:id", sendContactRequest);
 router.post("/contact-request/:id/accept", acceptContactRequest);
 router.post("/contact-request/:id/reject", rejectContactRequest);
 router.get("/chats", getChatPartners);
+
+// Reading is fine unverified; sending is not.
 router.get("/:id", getMessagesByUserId);
-router.post("/send/:id", sendMessage);
+router.post("/send/:id", requireVerified, sendMessage);
+
 router.post("/:id/read", markMessageAsRead);
-router.put("/:id", editMessage);
+router.put("/:id", requireVerified, editMessage);
 router.delete("/:id", deleteMessage);
-router.post("/:id/react", reactToMessage);
+router.post("/:id/react", requireVerified, reactToMessage);
 
 export default router;
