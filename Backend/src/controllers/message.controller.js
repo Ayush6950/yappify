@@ -428,14 +428,17 @@ export const editMessage = async (req, res) => {
       return res.status(400).json({ message: "Text is required to edit message." });
     }
 
-    const message = await Message.findById(messageId);
-    if (!message) {
-      return res.status(404).json({ message: "Message not found." });
-    }
+  const message = await Message.findById(messageId);
+if (!message) {
+  return res.status(404).json({ message: "Message not found." });
+}
 
-    if (!message.senderId.equals(userId)) {
-      return res.status(403).json({ message: "Unauthorized to edit this message." });
-    }
+// Compare as strings
+if (message.senderId.toString() !== userId.toString()) {
+  return res.status(403).json({
+    message: "You can only edit your own messages"
+  });
+}
 
     message.editHistory.push({
       text: message.text,
@@ -514,6 +517,18 @@ export const reactToMessage = async (req, res) => {
     const message = await Message.findById(messageId);
     if (!message) {
       return res.status(404).json({ message: "Message not found." });
+    }
+
+    // Ownership check: only the two people in the conversation may react.
+    // Compare as strings — ObjectId === ObjectId is always false.
+    const isParticipant =
+      message.senderId.toString() === userId.toString() ||
+      message.receiverId.toString() === userId.toString();
+
+    if (!isParticipant) {
+      return res.status(403).json({
+        message: "You can only react to messages in your own conversations",
+      });
     }
 
     const existingReactionIndex = message.reactions.findIndex(

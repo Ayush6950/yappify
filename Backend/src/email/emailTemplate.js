@@ -48,3 +48,50 @@ export function createWelcomeEmailTemplate(name, clientURL) {
   </html>
   `;
 }
+
+const shell = (heading, bodyHtml) => `
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="font-family:'Segoe UI',Tahoma,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px;background:#f5f5f5;">
+  <div style="background:linear-gradient(to right,#36D1DC,#5B86E5);padding:30px;text-align:center;border-radius:12px 12px 0 0;">
+    <h1 style="color:#fff;margin:0;font-size:26px;font-weight:500;">${heading}</h1>
+  </div>
+  <div style="background:#fff;padding:35px;border-radius:0 0 12px 12px;box-shadow:0 4px 15px rgba(0,0,0,.05);">
+    ${bodyHtml}
+    <p style="margin-top:32px;font-size:12px;color:#999;">
+      If you didn't request this, you can safely ignore this email.
+    </p>
+  </div>
+</body>
+</html>`;
+
+const button = (url, label) => `
+  <div style="text-align:center;margin:30px 0;">
+    <a href="${url}" style="background:linear-gradient(to right,#36D1DC,#5B86E5);color:#fff;text-decoration:none;padding:14px 34px;border-radius:50px;font-weight:500;display:inline-block;">${label}</a>
+  </div>
+  <p style="font-size:13px;color:#777;word-break:break-all;">
+    Or paste this link into your browser:<br><a href="${url}" style="color:#5B86E5;">${url}</a>
+  </p>`;
+
+export function createVerifyEmailTemplate(name, verifyURL, ttlHours) {
+  return shell(
+    "Confirm your email",
+    `<p style="font-size:18px;color:#5B86E5;"><strong>Hello ${name},</strong></p>
+     <p>Confirm your email address to unlock messaging on Yappify.</p>
+     ${button(verifyURL, "Verify my email")}
+     <p style="font-size:14px;color:#777;">This link expires in ${ttlHours} hour(s).</p>`
+  );
+}
+
+export function createPasswordResetTemplate(name, resetURL, ttlMinutes) {
+  return shell(
+    "Reset your password",
+    `<p style="font-size:18px;color:#5B86E5;"><strong>Hello ${name},</strong></p>
+     <p>We received a request to reset your Yappify password.</p>
+     ${button(resetURL, "Choose a new password")}
+     <p style="font-size:14px;color:#777;">
+       This link expires in ${ttlMinutes} minutes and can only be used once.
+     </p>`
+  );
+}

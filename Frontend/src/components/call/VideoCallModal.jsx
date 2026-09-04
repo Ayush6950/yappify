@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { MicOff, VideoOff } from "lucide-react";
 import { useCallStore } from "../../store/useCallStore";
 import CallControls from "./CallControls";
 
@@ -31,101 +32,92 @@ const VideoCallModal = () => {
     }
   }, [remoteStream]);
 
-  // Handle checking caller or user structure
   const targetUser = activeCall?.from || activeCall;
   const name = targetUser?.fullName || "User";
   const profilePic = targetUser?.profilePic || "/avatar.png";
   const isVideo = callType === "video";
 
-  return (
-    <div className="fixed inset-0 bg-[#0a0e1a] flex flex-col justify-center items-center z-[9990] animate-fade-in text-white overflow-hidden">
-      {/* Dynamic Background Gradients */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.95)_0%,rgba(2,6,23,1)_100%)] z-0" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full z-0 pointer-events-none" />
+  const statusLabel = !callAccepted
+    ? isCalling
+      ? "Calling..."
+      : "Connecting..."
+    : isVideo
+      ? "Connected"
+      : "Voice call in progress";
 
-      {/* Main Container */}
-      <div className="relative w-full h-full flex items-center justify-center z-10">
+  return (
+    <div className="fixed inset-0 z-[9990] flex items-center justify-center overflow-hidden bg-brand-surface-deep text-white animate-fade-in">
+      {/* Ambient backdrop */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(17,24,39,0.9)_0%,rgba(3,5,12,1)_100%)]" />
+        <div className="absolute left-1/2 top-1/2 size-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-[140px]" />
+      </div>
+
+      <div className="relative z-10 flex size-full items-center justify-center">
         {isVideo && callAccepted ? (
-          // Video Call Connected View
-          <div className="relative w-full h-full">
-            {/* Remote Video (Full Screen) */}
+          <div className="relative size-full">
             <video
               ref={remoteVideoRef}
               autoPlay
               playsInline
-              className="w-full h-full object-cover bg-black"
+              className="size-full bg-black object-cover"
             />
-            {/* Local Video (Floating PIP) */}
+
+            {/* Local picture-in-picture */}
             {isVideoEnabled && localStream && (
               <video
                 ref={localVideoRef}
                 autoPlay
                 playsInline
                 muted
-                className="
-                  absolute top-4 sm:top-6 right-4 sm:right-6 w-24 sm:w-36 md:w-56
-                  rounded-2xl border-2 border-indigo-500/30 shadow-2xl
-                  object-cover bg-slate-900 transition-all duration-300
-                  hover:scale-105
-                "
+                className="absolute right-4 top-4 w-28 rounded-2xl border border-white/[0.12] bg-black object-cover shadow-raised transition-transform duration-300 hover:scale-105 sm:right-6 sm:top-6 sm:w-40 md:w-56"
               />
             )}
           </div>
         ) : (
-          // Voice Call OR Video Call (Dialing/Connecting) View
-          <div className="flex flex-col items-center max-w-md px-6 text-center">
-            {/* Pulsing profile pic */}
+          <div className="flex max-w-md flex-col items-center px-6 text-center">
             <div className="relative mb-8">
-              <div className="absolute inset-0 rounded-full bg-indigo-500 animate-pulse opacity-15 blur-xl scale-150" />
+              <span className="absolute inset-0 scale-150 rounded-full bg-indigo-500/25 blur-2xl" aria-hidden="true" />
               {!callAccepted && (
-                <div className="absolute inset-0 rounded-full border border-indigo-500/30 animate-ping opacity-60" />
+                <span className="absolute -inset-3 rounded-full border border-indigo-400/30 animate-ping" aria-hidden="true" />
               )}
               <img
                 src={profilePic}
                 alt={name}
-                className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-slate-800 shadow-2xl relative z-10"
+                className="relative size-32 rounded-full object-cover ring-4 ring-white/10 md:size-40"
               />
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-100">{name}</h2>
-            <p className="text-indigo-400 font-semibold mt-3 animate-pulse tracking-wide uppercase text-sm">
-              {!callAccepted
-                ? isCalling
-                  ? "Calling..."
-                  : "Connecting..."
-                : "Ongoing Voice Call"}
+            <h2 className="text-2xl font-bold tracking-tight text-slate-50 md:text-3xl">{name}</h2>
+            <p className="mt-3 text-sm font-semibold uppercase tracking-[0.15em] text-indigo-300 animate-pulse">
+              {statusLabel}
             </p>
 
-            {/* Local Video Preview while dialing (only for Video calls) */}
+            {/* Self-preview while dialling a video call */}
             {isVideo && !callAccepted && isVideoEnabled && localStream && (
-              <div className="mt-8 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl w-48 aspect-[3/4] bg-slate-900">
-                <video
-                  ref={localVideoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-full object-cover"
-                />
+              <div className="mt-8 aspect-[3/4] w-44 overflow-hidden rounded-2xl border border-white/[0.1] bg-black shadow-raised">
+                <video ref={localVideoRef} autoPlay playsInline muted className="size-full object-cover" />
               </div>
             )}
           </div>
         )}
 
-        {/* Muted and Video disabled overlays */}
-        <div className="absolute top-6 left-6 flex flex-col gap-2 text-xs text-white z-20">
+        {/* Status pills */}
+        <div className="absolute left-4 top-4 z-20 flex flex-col gap-2 sm:left-6 sm:top-6">
           {isMuted && (
-            <div className="bg-red-500/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-400/20 font-semibold tracking-wide shadow-md uppercase">
+            <span className="flex items-center gap-1.5 rounded-full border border-red-400/25 bg-red-500/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider backdrop-blur-md">
+              <MicOff className="size-3.5" />
               Muted
-            </div>
+            </span>
           )}
           {!isVideoEnabled && isVideo && (
-            <div className="bg-red-500/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-400/20 font-semibold tracking-wide shadow-md uppercase">
-              Camera Off
-            </div>
+            <span className="flex items-center gap-1.5 rounded-full border border-red-400/25 bg-red-500/85 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider backdrop-blur-md">
+              <VideoOff className="size-3.5" />
+              Camera off
+            </span>
           )}
         </div>
 
-        {/* Global Controls Overlay */}
         <CallControls
           isMuted={isMuted}
           isVideoOff={!isVideoEnabled}

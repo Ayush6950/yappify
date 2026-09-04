@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { LogOutIcon, VolumeOffIcon, Volume2Icon, CheckCircle2Icon, Settings, MoreVertical } from "lucide-react";
+import { LogOutIcon, VolumeOffIcon, Volume2Icon, CheckCircle2Icon, Settings, MoreVertical, CameraIcon } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import NotificationSettingsModal from "./NotificationSettingsModal";
@@ -30,6 +30,14 @@ function ProfileHeader() {
     };
   }, []);
 
+  // Escape closes the menu — matches the rest of the app's dismiss behaviour
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const handleEsc = (e) => e.key === "Escape" && setIsMenuOpen(false);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isMenuOpen]);
+
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -41,7 +49,7 @@ function ProfileHeader() {
     reader.onloadend = async () => {
       const base64Image = reader.result;
       setSelectedImg(base64Image);
-      
+
       try {
         await updateProfile({ profilePic: base64Image });
         setUploadSuccess(true);
@@ -52,59 +60,52 @@ function ProfileHeader() {
     };
   };
 
+  const click = () => {
+    mouseClickSound.currentTime = 0;
+    mouseClickSound.play().catch(() => {});
+  };
+
   return (
     <>
-      <div className="relative z-20 p-4 sm:p-6 border-b border-slate-700/40 bg-slate-900/10 backdrop-blur-sm animate-fade-in">
-        <div className="relative flex items-center justify-between">
-          {/* Left section - Avatar & User info */}
-          <div className="flex items-center gap-4">
-            {/* Avatar */}
-            <div className="relative group">
-              {/* Avatar button */}
+      <div className="relative z-20 border-b border-white/[0.07] px-4 py-4 sm:px-5 sm:py-5">
+        <div className="flex items-center justify-between gap-3">
+          {/* ---------- Identity ---------- */}
+          <div className="flex min-w-0 items-center gap-3.5">
+            <div className="relative shrink-0">
               <button
                 onClick={() => fileInputRef.current.click()}
-                className={`
-                  relative size-14 rounded-full overflow-hidden
-                  border-2 border-slate-700
-                  transition-all duration-300 ease-out
-                  hover:scale-105
-                  focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 focus:ring-offset-slate-955
-                  active:scale-95
-                  ${isUploading ? "opacity-75 cursor-wait" : "cursor-pointer"}
-                `}
-                title="Click to change profile picture"
+                className={`group relative size-12 overflow-hidden rounded-full ring-2 ring-white/10 transition-all duration-300 hover:ring-indigo-400/60 ${
+                  isUploading ? "cursor-wait opacity-75" : "cursor-pointer"
+                }`}
+                title="Change profile picture"
                 disabled={isUploading}
               >
                 <img
                   src={selectedImg || authUser.profilePic || "/avatar.png"}
-                  alt="User image"
-                  className="size-full object-cover"
+                  alt={authUser.fullName}
+                  className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
 
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                  <span className="text-white text-xs font-medium">
-                    {isUploading ? "..." : "Change"}
-                  </span>
-                </div>
+                {/* Hover affordance */}
+                <span className="absolute inset-0 grid place-items-center bg-black/55 opacity-0 backdrop-blur-[1px] transition-opacity duration-300 group-hover:opacity-100">
+                  <CameraIcon className="size-4 text-white" />
+                </span>
 
-                {/* Upload success indicator */}
                 {uploadSuccess && (
-                  <div className="absolute inset-0 bg-emerald-500/20 flex items-center justify-center rounded-full">
-                    <CheckCircle2Icon className="w-5 h-5 text-emerald-400" />
-                  </div>
+                  <span className="absolute inset-0 grid place-items-center bg-emerald-500/25 backdrop-blur-[1px]">
+                    <CheckCircle2Icon className="size-5 text-emerald-300" />
+                  </span>
                 )}
 
-                {/* Loading spinner */}
                 {isUploading && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-indigo-200 border-t-white rounded-full animate-spin-fast" />
-                  </div>
+                  <span className="absolute inset-0 grid place-items-center bg-black/60">
+                    <span className="size-5 rounded-full border-2 border-indigo-300/30 border-t-indigo-300 animate-spin-fast" />
+                  </span>
                 )}
-
-                {/* Online status dot */}
-                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-950" />
               </button>
+
+              {/* Presence */}
+              <span className="absolute bottom-0 right-0 size-3.5 rounded-full border-2 border-brand-surface-sidebar bg-emerald-400 animate-ring-pulse" />
 
               <input
                 type="file"
@@ -116,91 +117,84 @@ function ProfileHeader() {
               />
             </div>
 
-            {/* User info section */}
-            <div className="flex flex-col justify-center">
-              <h3 className="text-slate-100 font-semibold text-base tracking-tight max-w-[180px] truncate hover:text-indigo-400 transition-colors duration-300">
+            <div className="min-w-0">
+              <h3 className="truncate text-[15px] font-semibold tracking-tight text-slate-100">
                 {authUser.fullName}
               </h3>
-
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                <p className="text-xs font-medium text-emerald-500">Online</p>
-              </div>
+              <p className="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-emerald-400">
+                <span className="size-1.5 rounded-full bg-emerald-400" />
+                Active now
+              </p>
             </div>
           </div>
 
-          {/* Right section - 3-dot Action Menu */}
-          <div className="relative" ref={menuRef}>
+          {/* ---------- Actions ---------- */}
+          <div className="relative shrink-0" ref={menuRef}>
             <button
               onClick={() => {
-                mouseClickSound.currentTime = 0;
-                mouseClickSound.play().catch(() => {});
+                click();
                 setIsMenuOpen(!isMenuOpen);
               }}
-              className={`
-                relative p-2 rounded-lg transition-all duration-300 ease-out
-                focus:outline-none focus:ring-2 focus:ring-indigo-500/50
-                group text-slate-400 hover:text-indigo-400 hover:bg-slate-850
-                ${isMenuOpen ? "text-indigo-400 bg-slate-850" : ""}
-              `}
+              className={`icon-btn ${isMenuOpen ? "icon-btn-active" : ""}`}
               title="More options"
+              aria-haspopup="menu"
+              aria-expanded={isMenuOpen}
             >
               <MoreVertical className="size-5" />
             </button>
 
-            {/* Dropdown Menu */}
             {isMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-slate-700/50 bg-[#1e293b] shadow-xl shadow-black/60 z-50 py-1.5 animate-fade-in-down duration-200">
-                {/* Sound toggle option */}
+              <div
+                role="menu"
+                className="absolute right-0 z-50 mt-2 w-60 origin-top-right overflow-hidden rounded-2xl border border-white/[0.09] bg-brand-surface-card/95 p-1.5 shadow-raised backdrop-blur-xl animate-fade-in-down"
+              >
                 <button
+                  role="menuitem"
                   onClick={() => {
-                    mouseClickSound.currentTime = 0;
-                    mouseClickSound.play().catch(() => {});
+                    click();
                     toggleSound();
                     setIsMenuOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 transition-colors duration-200 text-slate-300 hover:text-indigo-400 hover:bg-indigo-550/10 group/item"
+                  className="group/item flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-300 transition-colors hover:bg-white/[0.06] hover:text-slate-50"
                 >
                   {isSoundEnabled ? (
                     <>
-                      <VolumeOffIcon className="size-4 text-slate-400 group-hover/item:text-indigo-400 transition-colors" />
-                      <span>Mute Sounds</span>
+                      <VolumeOffIcon className="size-4 text-slate-500 transition-colors group-hover/item:text-indigo-300" />
+                      <span>Mute sounds</span>
                     </>
                   ) : (
                     <>
-                      <Volume2Icon className="size-4 text-slate-400 group-hover/item:text-indigo-400 transition-colors" />
-                      <span>Unmute Sounds</span>
+                      <Volume2Icon className="size-4 text-slate-500 transition-colors group-hover/item:text-indigo-300" />
+                      <span>Unmute sounds</span>
                     </>
                   )}
                 </button>
 
-                {/* Settings option */}
                 <button
+                  role="menuitem"
                   onClick={() => {
-                    mouseClickSound.currentTime = 0;
-                    mouseClickSound.play().catch(() => {});
+                    click();
                     setIsSettingsOpen(true);
                     setIsMenuOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 transition-colors duration-200 text-slate-300 hover:text-indigo-400 hover:bg-indigo-550/10 group/item"
+                  className="group/item flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-300 transition-colors hover:bg-white/[0.06] hover:text-slate-50"
                 >
-                  <Settings className="size-4 text-slate-400 group-hover/item:text-indigo-400 transition-colors" />
-                  <span>Notification Settings</span>
+                  <Settings className="size-4 text-slate-500 transition-colors group-hover/item:text-indigo-300" />
+                  <span>Notification settings</span>
                 </button>
 
-                {/* Divider */}
-                <div className="h-px bg-slate-700/50 my-1" />
+                <div className="my-1.5 h-px bg-white/[0.07]" />
 
-                {/* Logout option */}
                 <button
+                  role="menuitem"
                   onClick={() => {
                     setIsMenuOpen(false);
                     logout();
                   }}
-                  className="w-full px-4 py-2 text-sm text-left flex items-center gap-3 transition-colors duration-200 text-slate-300 hover:text-red-400 hover:bg-red-500/10 group/item"
+                  className="group/item flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm text-slate-300 transition-colors hover:bg-red-500/10 hover:text-red-300"
                 >
-                  <LogOutIcon className="size-4 text-slate-400 group-hover/item:text-red-400 transition-colors" />
-                  <span>Logout</span>
+                  <LogOutIcon className="size-4 text-slate-500 transition-colors group-hover/item:text-red-400" />
+                  <span>Log out</span>
                 </button>
               </div>
             )}

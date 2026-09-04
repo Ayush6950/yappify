@@ -1,4 +1,4 @@
-import { Phone, PhoneOff } from "lucide-react";
+import { Phone, PhoneOff, Video } from "lucide-react";
 import { useCallStore } from "../../store/useCallStore";
 
 const IncomingCallModal = () => {
@@ -8,57 +8,55 @@ const IncomingCallModal = () => {
 
   if (!incomingCall) return null;
 
+  const isVideo = incomingCall.callType === "video";
+
   return (
-    <div className="fixed inset-0 bg-[#0a0e1a]/80 backdrop-blur-md flex justify-center items-center z-[9999] animate-fade-in p-4">
-      <div className="bg-[#1e293b] border border-slate-700/80 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-sm sm:w-[350px] text-center transform scale-100 transition-all duration-300">
-        <div className="flex flex-col items-center">
-          {/* Avatar with glowing heartbeat animation */}
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-indigo-500 animate-ping opacity-25" />
-            <div className="absolute inset-0 rounded-full bg-indigo-400/20 blur-md animate-pulse" />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 p-4 backdrop-blur-lg animate-fade-in">
+      <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-white/[0.09] bg-brand-surface-card shadow-shell animate-pop-in">
+        <div className="flex flex-col items-center px-6 py-8 text-center sm:px-8">
+          {/* Avatar with a live ring */}
+          <div className="relative mb-6">
+            <span className="absolute inset-0 rounded-full bg-indigo-500/40 blur-2xl" aria-hidden="true" />
+            <span className="absolute -inset-2 rounded-full border border-indigo-400/40 animate-ping" aria-hidden="true" />
             <img
               src={incomingCall.from?.profilePic || "/avatar.png"}
-              alt={incomingCall.from?.fullName}
-              className="w-24 h-24 rounded-full object-cover border-4 border-slate-700 relative z-10 shadow-lg"
+              alt={incomingCall.from?.fullName || "Caller"}
+              className="relative size-24 rounded-full object-cover ring-4 ring-white/10"
             />
           </div>
 
-          <h2 className="mt-6 text-xl font-bold text-slate-100 tracking-tight">
-            {incomingCall.from?.fullName}
+          <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-indigo-400/25 bg-indigo-500/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-indigo-200">
+            {isVideo ? <Video className="size-3" /> : <Phone className="size-3" />}
+            Incoming {isVideo ? "video" : "voice"} call
+          </span>
+
+          <h2 className="text-xl font-bold tracking-tight text-slate-50">
+            {incomingCall.from?.fullName || "Unknown caller"}
           </h2>
+          <p className="mt-1 text-sm text-slate-500 animate-pulse">Ringing...</p>
 
-          <p className="text-indigo-400 text-sm font-semibold mt-2 animate-pulse tracking-wide uppercase">
-            Incoming {incomingCall.callType === "video" ? "Video" : "Voice"} Call...
-          </p>
+          <div className="mt-8 flex items-center gap-10">
+            <div className="flex flex-col items-center gap-2">
+              <button
+                onClick={rejectCall}
+                title="Decline"
+                className="grid size-14 place-items-center rounded-full bg-red-600 text-white shadow-[0_10px_30px_-10px_rgba(220,38,38,1)] transition-all duration-200 hover:bg-red-500 active:scale-90"
+              >
+                <PhoneOff className="size-6" />
+              </button>
+              <span className="text-xs text-slate-500">Decline</span>
+            </div>
 
-          <div className="flex gap-8 mt-8 justify-center">
-            {/* Accept Button */}
-            <button
-              onClick={acceptCall}
-              className="
-                bg-green-500 hover:bg-green-600
-                active:scale-90 transition-all duration-200
-                p-4 rounded-full shadow-lg shadow-green-500/30
-                border border-green-400/20 hover:shadow-green-500/50
-              "
-              title="Accept Call"
-            >
-              <Phone className="text-white w-6 h-6 fill-white" />
-            </button>
-
-            {/* Reject Button */}
-            <button
-              onClick={rejectCall}
-              className="
-                bg-red-500 hover:bg-red-600
-                active:scale-90 transition-all duration-200
-                p-4 rounded-full shadow-lg shadow-red-500/30
-                border border-red-400/20 hover:shadow-red-500/50
-              "
-              title="Reject Call"
-            >
-              <PhoneOff className="text-white w-6 h-6 fill-white" />
-            </button>
+            <div className="flex flex-col items-center gap-2">
+              <button
+                onClick={acceptCall}
+                title="Accept"
+                className="grid size-14 place-items-center rounded-full bg-emerald-500 text-white shadow-[0_10px_30px_-10px_rgba(16,185,129,1)] transition-all duration-200 hover:bg-emerald-400 active:scale-90"
+              >
+                <Phone className="size-6" />
+              </button>
+              <span className="text-xs text-slate-500">Accept</span>
+            </div>
           </div>
         </div>
       </div>

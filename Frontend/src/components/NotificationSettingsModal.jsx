@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
-import { X, Volume2, VolumeX, Bell, BellOff, Keyboard, Play, Monitor } from "lucide-react";
+import { X, Volume2, VolumeX, Bell, Keyboard, Play, Monitor } from "lucide-react";
 import toast from "react-hot-toast";
+import Toggle from "./Toggle";
 
 const playPreviewSynthSound = (type, volume = 0.5) => {
   try {
@@ -52,6 +53,25 @@ const playPreviewSynthSound = (type, volume = 0.5) => {
   }
 };
 
+/** One labelled row in the settings sheet. */
+function SettingRow({ icon: Icon, title, description, children, warning }) {
+  return (
+    <div className="flex items-start justify-between gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-3.5">
+      <div className="flex min-w-0 gap-3">
+        <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg bg-indigo-500/10 text-indigo-300">
+          <Icon className="size-4" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-slate-100">{title}</p>
+          <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{description}</p>
+          {warning && <p className="mt-1 text-xs font-medium text-red-400">{warning}</p>}
+        </div>
+      </div>
+      <div className="shrink-0 pt-0.5">{children}</div>
+    </div>
+  );
+}
+
 const NotificationSettingsModal = ({ isOpen, onClose }) => {
   const {
     isSoundEnabled,
@@ -74,6 +94,14 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  // Escape closes the sheet
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEsc = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleDesktopToggle = async () => {
@@ -94,8 +122,7 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
     if (permission === "granted") {
       setNotificationSetting("isDesktopNotificationsEnabled", true);
       toast.success("Desktop notifications enabled!");
-      
-      // Send a quick test notification
+
       new Notification("Notifications Enabled", {
         body: "You will now receive notifications when messages arrive and the app is in the background.",
         icon: "/avatar.png",
@@ -118,88 +145,79 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex justify-center items-center z-[9999] animate-fade-in p-4">
-      <div className="bg-[#1e293b] border border-slate-700/50 rounded-2xl shadow-2xl w-full max-w-md transform scale-100 transition-all duration-300 overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center bg-[#1e293b]/80">
-          <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-indigo-400 animate-pulse" />
-            <h2 className="text-lg font-semibold text-slate-100 tracking-tight">Notification Settings</h2>
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md animate-fade-in"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Notification settings"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-white/[0.09] bg-brand-surface-card shadow-shell animate-pop-in"
+      >
+        {/* ---------- Header ---------- */}
+        <div className="flex items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-4">
+          <div className="flex items-center gap-2.5">
+            <span className="grid size-9 place-items-center rounded-xl bg-indigo-500/12 text-indigo-300">
+              <Bell className="size-[18px]" />
+            </span>
+            <h2 className="text-base font-semibold tracking-tight text-slate-100">Notifications</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors"
-            title="Close"
-          >
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="icon-btn" title="Close">
+            <X className="size-5" />
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="p-4 sm:p-6 space-y-6 overflow-y-auto max-h-[60vh] sm:max-h-[500px]">
-          {/* Global Sound Toggles */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  {isSoundEnabled ? <Volume2 className="w-4 h-4 text-indigo-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
-                  <label className="text-sm font-medium text-slate-200">Message Sounds</label>
-                </div>
-                <p className="text-xs text-slate-400">Play alert sound for incoming messages.</p>
-              </div>
-              <input
-                type="checkbox"
+        {/* ---------- Body ---------- */}
+        <div className="max-h-[65vh] space-y-5 overflow-y-auto p-4 sm:p-5">
+          <section className="space-y-2">
+            <h3 className="label-caps px-1">Alerts</h3>
+
+            <SettingRow
+              icon={isSoundEnabled ? Volume2 : VolumeX}
+              title="Message sounds"
+              description="Play an alert when a message arrives."
+            >
+              <Toggle
                 checked={isSoundEnabled}
-                onChange={(e) => setNotificationSetting("isSoundEnabled", e.target.checked)}
-                className="checkbox checkbox-primary size-5 rounded-md accent-indigo-500 cursor-pointer"
+                onChange={(v) => setNotificationSetting("isSoundEnabled", v)}
+                label="Message sounds"
               />
-            </div>
+            </SettingRow>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <Keyboard className="w-4 h-4 text-indigo-400" />
-                  <label className="text-sm font-medium text-slate-200">Typing Sounds</label>
-                </div>
-                <p className="text-xs text-slate-400">Play mechanical typewriter sounds while typing.</p>
-              </div>
-              <input
-                type="checkbox"
+            <SettingRow
+              icon={Keyboard}
+              title="Typing sounds"
+              description="Mechanical keyboard clicks as you type."
+            >
+              <Toggle
                 checked={isKeystrokeSoundEnabled}
-                onChange={(e) => setNotificationSetting("isKeystrokeSoundEnabled", e.target.checked)}
-                className="checkbox checkbox-primary size-5 rounded-md accent-indigo-500 cursor-pointer"
+                onChange={(v) => setNotificationSetting("isKeystrokeSoundEnabled", v)}
+                label="Typing sounds"
               />
-            </div>
+            </SettingRow>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <Monitor className="w-4 h-4 text-indigo-400" />
-                  <label className="text-sm font-medium text-slate-200">Desktop Notifications</label>
-                </div>
-                <p className="text-xs text-slate-400">
-                  Show OS push notifications when tab is in background.
-                  {localPermission === "denied" && (
-                    <span className="text-red-400 block font-medium">Permission blocked by browser.</span>
-                  )}
-                </p>
-              </div>
-              <input
-                type="checkbox"
+            <SettingRow
+              icon={Monitor}
+              title="Desktop notifications"
+              description="Show OS notifications when this tab is in the background."
+              warning={localPermission === "denied" ? "Permission is blocked by your browser." : null}
+            >
+              <Toggle
                 checked={isDesktopNotificationsEnabled}
                 onChange={handleDesktopToggle}
-                className="checkbox checkbox-primary size-5 rounded-md accent-indigo-500 cursor-pointer"
+                label="Desktop notifications"
               />
-            </div>
-          </div>
+            </SettingRow>
+          </section>
 
-          <hr className="border-slate-700/50" />
-
-          {/* Volume Control */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-medium text-slate-200">Alert Volume</label>
-              <span className="text-xs font-semibold text-indigo-400">{Math.round(notificationVolume * 100)}%</span>
+          <section className="space-y-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <div className="flex items-center justify-between">
+              <h3 className="label-caps">Alert volume</h3>
+              <span className="text-xs font-semibold text-indigo-300">
+                {Math.round(notificationVolume * 100)}%
+              </span>
             </div>
             <input
               type="range"
@@ -209,48 +227,42 @@ const NotificationSettingsModal = ({ isOpen, onClose }) => {
               value={notificationVolume}
               onChange={(e) => setNotificationSetting("notificationVolume", parseFloat(e.target.value))}
               disabled={!isSoundEnabled && !isKeystrokeSoundEnabled}
-              className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-400 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/[0.1] accent-indigo-400 disabled:cursor-not-allowed disabled:opacity-40"
             />
-          </div>
+          </section>
 
-          <hr className="border-slate-700/50" />
-
-          {/* Sound Presets */}
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-slate-200 block">Notification Sound Alert</label>
+          <section className="space-y-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <h3 className="label-caps">Notification sound</h3>
             <div className="flex gap-2">
               <select
                 value={notificationSoundType}
                 onChange={(e) => setNotificationSetting("notificationSoundType", e.target.value)}
                 disabled={!isSoundEnabled}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="field min-w-0 flex-1 cursor-pointer disabled:opacity-40"
               >
-                <option value="default">Default (Classic MP3)</option>
-                <option value="chime">Synth Chime</option>
-                <option value="pop">Synth Pop</option>
-                <option value="bubble">Synth Bubble</option>
-                <option value="retro">Retro Beep</option>
+                <option value="default">Default (classic)</option>
+                <option value="chime">Synth chime</option>
+                <option value="pop">Synth pop</option>
+                <option value="bubble">Synth bubble</option>
+                <option value="retro">Retro beep</option>
               </select>
               <button
                 type="button"
                 onClick={playPreview}
                 disabled={!isSoundEnabled}
-                className="px-3.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 active:scale-95 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex shrink-0 items-center gap-1.5 rounded-xl border border-indigo-400/25 bg-indigo-500/12 px-3.5 text-sm font-medium text-indigo-200 transition-all hover:bg-indigo-500/20 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
                 title="Preview selected sound"
               >
-                <Play className="w-4 h-4 fill-indigo-400/20" />
-                <span>Preview</span>
+                <Play className="size-4" />
+                Play
               </button>
             </div>
-          </div>
+          </section>
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-700/50 bg-[#111827]/30 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-5 py-2 bg-gradient-to-r from-indigo-500 to-violet-500 text-white hover:from-indigo-600 hover:to-violet-600 rounded-lg text-sm font-medium transition-all active:scale-95 shadow-lg shadow-indigo-500/20"
-          >
+        {/* ---------- Footer ---------- */}
+        <div className="flex justify-end border-t border-white/[0.07] bg-black/20 px-5 py-4">
+          <button onClick={onClose} className="btn-primary">
             Done
           </button>
         </div>

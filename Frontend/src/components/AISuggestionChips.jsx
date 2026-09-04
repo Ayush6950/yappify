@@ -15,40 +15,29 @@ function AISuggestionChips({ suggestions, onUseAsReply }) {
 
   return (
     <div className="space-y-2">
-      <p className="text-xs text-slate-500 font-medium">Reply suggestions</p>
+      <p className="label-caps">Reply suggestions</p>
+
       {suggestions.map((suggestion, index) => (
         <div
           key={index}
-          className="
-            group p-3 rounded-lg border border-slate-700/40 bg-slate-900/30
-            hover:border-violet-500/30 hover:bg-slate-900/50 transition-colors
-          "
+          className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-3 transition-colors duration-200 hover:border-violet-400/25 hover:bg-white/[0.05]"
         >
-          <p className="text-sm text-slate-300 leading-relaxed mb-2">
-            {suggestion}
-          </p>
-          <div className="flex items-center gap-2">
+          <p className="mb-2.5 text-sm leading-relaxed text-slate-300">{suggestion}</p>
+
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => onUseAsReply(suggestion)}
-              className="
-                flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium
-                bg-violet-500/15 text-violet-300 border border-violet-500/25
-                hover:bg-violet-500/25 transition-colors
-              "
+              className="flex items-center gap-1.5 rounded-lg border border-violet-400/25 bg-violet-500/15 px-2.5 py-1.5 text-xs font-semibold text-violet-200 transition-colors hover:bg-violet-500/25"
             >
-              <MessageSquarePlus className="w-3 h-3" />
+              <MessageSquarePlus className="size-3.5" />
               Use as reply
             </button>
             <button
               onClick={() => handleCopy(suggestion)}
-              className="
-                flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium
-                bg-slate-800/30 text-slate-400 border border-slate-700/40
-                hover:bg-slate-800 hover:text-slate-300 transition-colors
-              "
+              className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-xs font-medium text-slate-400 transition-colors hover:bg-white/[0.08] hover:text-slate-200"
               title="Copy to clipboard"
             >
-              <Copy className="w-3 h-3" />
+              <Copy className="size-3.5" />
               Copy
             </button>
           </div>
